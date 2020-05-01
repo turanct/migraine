@@ -1,0 +1,8 @@
+/build/*
+/vendor/*
+/phpcs.xml
+/phpunit.xml
+/.env
+
+/migrations.json
+/migrations/*
