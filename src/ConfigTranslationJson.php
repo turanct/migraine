@@ -68,7 +68,7 @@ final class ConfigTranslationJson implements ConfigTranslation
     /**
      * @throws CouldNotGenerateConfig
      */
-    private function assertNotEmpty(string $value): void
+    private function assertNotEmpty(string $value)
     {
         if (empty($value)) {
             throw new CouldNotGenerateConfig();

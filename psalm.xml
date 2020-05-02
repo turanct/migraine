@@ -1,8 +1,14 @@
 <?xml version="1.0"?>
 <psalm
+    errorLevel="1"
+    requireVoidReturnType="false"
     checkForThrowsDocblock="true"
+    ignoreInternalFunctionNullReturn="false"
+    findUnusedVariablesAndParams="true"
+    findUnusedCode="true"
 >
     <projectFiles>
+        <file name="bin/migrate" />
         <directory name="src" />
     </projectFiles>
 </psalm>

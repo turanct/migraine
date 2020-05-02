@@ -26,4 +26,5 @@ before_script:
 
 script:
   - vendor/bin/phpcs --standard=psr2 src/
+  - vendor/bin/psalm --show-info=true
   - vendor/bin/phpunit
