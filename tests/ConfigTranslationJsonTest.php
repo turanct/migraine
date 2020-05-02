@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 final class ConfigTranslationJsonTest extends TestCase
 {
     /**
-     * @expectedException CouldNotGenerateConfig
+     * @expectedException \Turanct\Migrations\CouldNotGenerateConfig
      */
     public function testItFailsWhenNoCompleteConfigurationIsGiven()
     {

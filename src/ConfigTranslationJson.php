@@ -62,6 +62,10 @@ final class ConfigTranslationJson implements ConfigTranslation
                 );
             }
 
+            if (empty($databases)) {
+                throw new CouldNotGenerateConfig();
+            }
+
             $groups[] = new Group((string) $name, $databases);
         }
 
