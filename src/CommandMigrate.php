@@ -42,12 +42,66 @@ final class CommandMigrate extends Command
     {
         $configFile = "{$this->workingDirectory}/migrations.json";
 
+        if (!is_file($configFile)) {
+            $output->writeln('Config file could not be read.');
+
+            return 1;
+        }
+
         $filecontents = file_get_contents($configFile);
 
         try {
             $config = $this->translation->translate($filecontents);
         } catch (CouldNotGenerateConfig $e) {
+            $output->writeln('Config file could not be read.');
+
+            return 1;
         }
+
+        $groups = $config->getGroups();
+
+        foreach ($groups as $group) {
+            $output->writeln("Migrating group \"{$group->getName()}\"");
+            $output->writeln('-------------------------------------------------------');
+
+            $finder = new \Symfony\Component\Finder\Finder();
+            try {
+                /** @psalm-suppress TooManyArguments */
+                $files = $finder
+                    ->files()
+                    ->in("{$this->workingDirectory}/{$config->getMigrationsDirectory()}/{$group->getName()}")
+                    ->name('*.sql')
+                    ->sortByName(true);
+            } catch (\Symfony\Component\Finder\Exception\DirectoryNotFoundException $e) {
+                $output->writeln('Migrations directory could not be found.');
+
+                return 1;
+            }
+
+            /** @var \Symfony\Component\Finder\SplFileInfo $file */
+            foreach ($files as $file) {
+                $migration = $file->getContents();
+
+                $databases = $group->getDatabases();
+
+                $output->writeln('Running migration:');
+                $output->writeln('-------------------------------------------------------');
+                $output->writeln($migration);
+                $output->writeln('-------------------------------------------------------');
+                $output->writeln('On these databases:');
+                $output->writeln('-------------------------------------------------------');
+
+                foreach ($databases as $database) {
+                    $dbString = "- {$database->getUser()}:{$database->getPassword()}@";
+                    $dbString .= "{$database->getHost()}/{$database->getDatabase()}";
+
+                    $output->writeln($dbString);
+                }
+
+                $output->writeln('-------------------------------------------------------');
+            }
+        }
+
 
         return 0;
     }

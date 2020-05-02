@@ -16,4 +16,24 @@ final class Database
         $this->password = $password;
         $this->database = $database;
     }
+
+    public function getHost(): string
+    {
+        return $this->host;
+    }
+
+    public function getUser(): string
+    {
+        return $this->user;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function getDatabase(): string
+    {
+        return $this->database;
+    }
 }

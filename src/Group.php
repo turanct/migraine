@@ -16,4 +16,17 @@ final class Group
         $this->name = $name;
         $this->databases = $databases;
     }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return Database[]
+     */
+    public function getDatabases(): array
+    {
+        return $this->databases;
+    }
 }

@@ -7,6 +7,9 @@ final class ConfigTranslationJson implements ConfigTranslation
     public function translate(string $json): Config
     {
         $parsedJson = (array) json_decode($json, true);
+        if (empty($parsedJson)) {
+            throw new CouldNotGenerateConfig();
+        }
 
         $directory = (string) $parsedJson['directory'] ?: 'migrations';
 
