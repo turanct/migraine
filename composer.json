@@ -38,6 +38,9 @@
             "Turanct\\Migrations\\": "tests"
         }
     },
+    "bin": [
+        "bin/migrate"
+    ],
     "scripts": {
         "test": "phpunit",
         "fix": "php-cs-fixer fix src/ --rules=@PSR2",
