@@ -16,6 +16,11 @@ final class CommandMigrate extends Command
     private $translation;
 
     /**
+     * @var Logs
+     */
+    private $logs;
+
+    /**
      * @var string
      */
     private $workingDirectory;
@@ -23,15 +28,16 @@ final class CommandMigrate extends Command
     /**
      * @throws \LogicException
      */
-    public function __construct(ConfigTranslation $translation, string $workingDirectory)
+    public function __construct(ConfigTranslation $translation, Logs $logs, string $workingDirectory)
     {
         parent::__construct();
 
         $this->translation = $translation;
+        $this->logs = $logs;
         $this->workingDirectory = $workingDirectory;
     }
 
-    protected function configure():void
+    protected function configure()
     {
         $this
             ->setDescription('Run migrations')
@@ -92,16 +98,23 @@ final class CommandMigrate extends Command
                 $output->writeln('-------------------------------------------------------');
 
                 foreach ($databases as $database) {
-                    $dbString = "- {$database->getUser()}:{$database->getPassword()}@";
-                    $dbString .= "{$database->getHost()}/{$database->getDatabase()}";
+                    $dbString = "- {$database->getHost()}/{$database->getDatabase()}";
 
                     $output->writeln($dbString);
+
+                    $this->logs->append(
+                        new EventMigrationWasExecuted(
+                            $database->getHost(),
+                            $database->getDatabase(),
+                            $file->getFilename(),
+                            new \DateTimeImmutable('now')
+                        )
+                    );
                 }
 
                 $output->writeln('-------------------------------------------------------');
             }
         }
-
 
         return 0;
     }

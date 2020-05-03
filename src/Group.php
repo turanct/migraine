@@ -2,6 +2,9 @@
 
 namespace Turanct\Migrations;
 
+/**
+ * @psalm-immutable
+ */
 final class Group
 {
     private $name;

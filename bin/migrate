@@ -8,7 +8,8 @@ use Symfony\Component\Console\Application;
 $application = new Application();
 
 $translation = new \Turanct\Migrations\ConfigTranslationJson();
+$logs = new \Turanct\Migrations\LogsInMemory();
 $currentWorkingDirectory = getcwd();
-$application->add(new \Turanct\Migrations\CommandMigrate($translation, $currentWorkingDirectory));
+$application->add(new \Turanct\Migrations\CommandMigrate($translation, $logs, $currentWorkingDirectory));
 
 $application->run();
