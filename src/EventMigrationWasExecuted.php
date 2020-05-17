@@ -9,28 +9,25 @@ use DateTimeImmutable;
  */
 final class EventMigrationWasExecuted implements Event
 {
-    private $host;
-    private $database;
+    private $connectionString;
     private $migration;
     private $time;
 
-    public function __construct(string $host, string $database, string $migration, DateTimeImmutable $time)
+    public function __construct(string $connectionString, string $migration, DateTimeImmutable $time)
     {
-        $this->host = $host;
-        $this->database = $database;
+        $this->connectionString = $connectionString;
         $this->migration = $migration;
         $this->time = $time;
     }
 
     /**
-     * @return array{event: string, host: string, database: string, migration: string, time: int}
+     * @return array{event: string, connectionString: string, migration: string, time: int}
      */
     public function toArray(): array
     {
         return [
             'event' => static::class,
-            'host' => $this->host,
-            'database' => $this->database,
+            'connectionString' => $this->connectionString,
             'migration' => $this->migration,
             'time' => $this->time->getTimestamp(),
         ];
@@ -44,8 +41,7 @@ final class EventMigrationWasExecuted implements Event
     public static function fromArray(array $array): Event
     {
         if (
-            !isset($array['host'])
-            || !isset($array['database'])
+            !isset($array['connectionString'])
             || !isset($array['migration'])
             || !isset($array['time'])
         ) {
@@ -59,8 +55,7 @@ final class EventMigrationWasExecuted implements Event
         }
 
         return new static(
-            (string) $array['host'],
-            (string) $array['database'],
+            (string) $array['connectionString'],
             (string) $array['migration'],
             $time
         );

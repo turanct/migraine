@@ -11,10 +11,10 @@ final class LogsInMemoryTest extends TestCase
         $logs = new LogsInMemory();
 
         $expected = [
-            new EventMigrationWasExecuted('host', 'db', 'migration', new \DateTimeImmutable('2020-05-01 23:59:59')),
-            new EventMigrationWasExecuted('host', 'db', 'migration', new \DateTimeImmutable('2020-05-02 10:00:00')),
-            new EventMigrationWasExecuted('host', 'db', 'migration', new \DateTimeImmutable('2020-05-02 16:04:05')),
-            new EventMigrationWasExecuted('host', 'db', 'migration', new \DateTimeImmutable('2020-05-03 12:12:12')),
+            new EventMigrationWasExecuted('connection', 'migration', new \DateTimeImmutable('2020-05-01 23:59:59')),
+            new EventMigrationWasExecuted('connection', 'migration', new \DateTimeImmutable('2020-05-02 10:00:00')),
+            new EventMigrationWasExecuted('connection', 'migration', new \DateTimeImmutable('2020-05-02 16:04:05')),
+            new EventMigrationWasExecuted('connection', 'migration', new \DateTimeImmutable('2020-05-03 12:12:12')),
         ];
 
         foreach ($expected as $event) {

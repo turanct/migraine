@@ -7,22 +7,20 @@ namespace Turanct\Migrations;
  */
 final class Database
 {
-    private $host;
+    private $connectionString;
     private $user;
     private $password;
-    private $database;
 
-    public function __construct(string $host, string $user, string $password, string $database)
+    public function __construct(string $connectionString, string $user, string $password)
     {
-        $this->host = $host;
+        $this->connectionString = $connectionString;
         $this->user = $user;
         $this->password = $password;
-        $this->database = $database;
     }
 
-    public function getHost(): string
+    public function getConnectionString(): string
     {
-        return $this->host;
+        return $this->connectionString;
     }
 
     public function getUser(): string
@@ -33,10 +31,5 @@ final class Database
     public function getPassword(): string
     {
         return $this->password;
-    }
-
-    public function getDatabase(): string
-    {
-        return $this->database;
     }
 }

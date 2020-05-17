@@ -2,6 +2,8 @@
 
 namespace Turanct\Migrations;
 
+use PDO;
+use PDOException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -98,14 +100,25 @@ final class CommandMigrate extends Command
                 $output->writeln('-------------------------------------------------------');
 
                 foreach ($databases as $database) {
-                    $dbString = "- {$database->getHost()}/{$database->getDatabase()}";
+                    $dbString = "- {$database->getConnectionString()}";
 
                     $output->writeln($dbString);
 
+                    try {
+                        $db = new PDO(
+                            $database->getConnectionString(),
+                            $database->getUser(),
+                            $database->getPassword()
+                        );
+
+                        $db->query($migration);
+                    } catch (PDOException $e) {
+                        $output->writeln('Failed');
+                    }
+
                     $this->logs->append(
                         new EventMigrationWasExecuted(
-                            $database->getHost(),
-                            $database->getDatabase(),
+                            $database->getConnectionString(),
                             $file->getFilename(),
                             new \DateTimeImmutable('now')
                         )

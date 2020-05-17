@@ -16,8 +16,7 @@ final class ConfigTranslationJsonTest extends TestCase
                 "directory": "migrations",
                 "groups": {
                     "main": {
-                        "host": "host",
-                        "user": "user",
+                        "user": "user"
                         "password": "password"
                     }
                 }
@@ -46,10 +45,9 @@ final class ConfigTranslationJsonTest extends TestCase
                     "directory": "migrations",
                     "groups": {
                         "main": {
-                            "host": "host",
-                            "user": "user",
-                            "password": "password",
-                            "database": "main"
+                            "connection": "connection",
+                            "user": "",
+                            "password": ""
                         }
                     }
                 }',
@@ -58,7 +56,7 @@ final class ConfigTranslationJsonTest extends TestCase
                     [
                         new Group(
                             'main',
-                            [new Database('host', 'user', 'password', 'main')]
+                            [new Database('connection', '', '')]
                         ),
                     ]
                 )
@@ -68,15 +66,9 @@ final class ConfigTranslationJsonTest extends TestCase
                     "directory": "migrations",
                     "groups": {
                         "main": {
-                            "host": "host",
+                            "connection": "connection",
                             "user": "user",
-                            "password": "password",
-                            "shard1": {
-                                "database": "main"
-                            },
-                            "shard2": {
-                                "database": "backup"
-                            }
+                            "password": "password"
                         }
                     }
                 }',
@@ -85,10 +77,7 @@ final class ConfigTranslationJsonTest extends TestCase
                     [
                         new Group(
                             'main',
-                            [
-                                new Database('host', 'user', 'password', 'main'),
-                                new Database('host', 'user', 'password', 'backup'),
-                            ]
+                            [new Database('connection', 'user', 'password')]
                         ),
                     ]
                 )
@@ -98,29 +87,24 @@ final class ConfigTranslationJsonTest extends TestCase
                     "directory": "migrations",
                     "groups": {
                         "main": {
-                            "host": "host1",
+                            "connection": "connection1",
                             "user": "user",
-                            "password": "password",
-                            "database": "main"
+                            "password": "password"
                         },
                         "shards": {
                             "user": "user",
                             "password": "password",
                             "shard1": {
-                                "host": "host2",
-                                "database": "shard1"
+                                "connection": "connection2/shard1"
                             },
                             "shard2": {
-                                "host": "host2",
-                                "database": "shard2"
+                                "connection": "connection2/shard2"
                             },
                             "shard3": {
-                                "host": "host3",
-                                "database": "shard3"
+                                "connection": "connection3/shard3"
                             },
                             "shard4": {
-                                "host": "host3",
-                                "database": "shard4"
+                                "connection": "connection3/shard4"
                             }
                         }
                     }
@@ -131,16 +115,51 @@ final class ConfigTranslationJsonTest extends TestCase
                         new Group(
                             'main',
                             [
-                                new Database('host1', 'user', 'password', 'main'),
+                                new Database('connection1', 'user', 'password'),
                             ]
                         ),
                         new Group(
                             'shards',
                             [
-                                new Database('host2', 'user', 'password', 'shard1'),
-                                new Database('host2', 'user', 'password', 'shard2'),
-                                new Database('host3', 'user', 'password', 'shard3'),
-                                new Database('host3', 'user', 'password', 'shard4'),
+                                new Database('connection2/shard1', 'user', 'password'),
+                                new Database('connection2/shard2', 'user', 'password'),
+                                new Database('connection3/shard3', 'user', 'password'),
+                                new Database('connection3/shard4', 'user', 'password'),
+                            ]
+                        ),
+                    ]
+                )
+            ],
+            [
+                '{
+                    "directory": "migrations",
+                    "groups": {
+                        "shards": {
+                            "shard1": {
+                                "connection": "connection2/shard1"
+                            },
+                            "shard2": {
+                                "connection": "connection2/shard2"
+                            },
+                            "shard3": {
+                                "connection": "connection3/shard3"
+                            },
+                            "shard4": {
+                                "connection": "connection3/shard4"
+                            }
+                        }
+                    }
+                }',
+                new Config(
+                    'migrations',
+                    [
+                        new Group(
+                            'shards',
+                            [
+                                new Database('connection2/shard1', '', ''),
+                                new Database('connection2/shard2', '', ''),
+                                new Database('connection3/shard3', '', ''),
+                                new Database('connection3/shard4', '', ''),
                             ]
                         ),
                     ]

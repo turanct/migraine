@@ -19,6 +19,7 @@
     "require": {
         "php": "~7.1",
         "ext-json": "*",
+        "ext-pdo": "*",
         "symfony/finder": "^v4.4.8",
         "symfony/console": "^v4.4.7"
     },
