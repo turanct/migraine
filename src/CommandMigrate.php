@@ -100,6 +100,10 @@ final class CommandMigrate extends Command
                 $output->writeln('-------------------------------------------------------');
 
                 foreach ($databases as $database) {
+                    if ($this->logs->migrationWasExecuted($database->getConnectionString(), $file->getFilename())) {
+                        continue;
+                    }
+
                     $dbString = "- {$database->getConnectionString()}";
 
                     $output->writeln($dbString);

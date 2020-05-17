@@ -6,6 +6,8 @@ interface Logs
 {
     public function append(Event $event): void;
 
+    public function migrationWasExecuted(string $connectionString, string $migration): bool;
+
     /**
      * @return Event[]
      */

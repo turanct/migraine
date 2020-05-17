@@ -33,6 +33,22 @@ final class LogsJsonTest extends TestCase
         $this->assertEquals($expected, $logs->getAll());
     }
 
+    public function testExecutedMigrationsAreRecognisedAsSuch()
+    {
+        $logs = new LogsJson($this->file);
+
+        $migration = new EventMigrationWasExecuted(
+            'connection',
+            'migration',
+            new \DateTimeImmutable('2020-05-01 23:59:59')
+        );
+
+        $logs->append($migration);
+
+        $this->assertEquals(true, $logs->migrationWasExecuted('connection', 'migration'));
+        $this->assertEquals(false, $logs->migrationWasExecuted('anotherConnection', 'someMigration'));
+    }
+
     public function tearDown()
     {
         if (is_file($this->file)) {

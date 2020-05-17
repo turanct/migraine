@@ -23,6 +23,25 @@ final class LogsJson implements Logs
         $this->writeToFile($events);
     }
 
+    public function migrationWasExecuted(string $connectionString, string $migration): bool
+    {
+        $events = $this->readFromFile();
+
+        foreach ($events as $event) {
+            $event = $event->toArray();
+
+            if (
+                $event['event'] === EventMigrationWasExecuted::class
+                && $event['connectionString'] === $connectionString
+                && $event['migration'] === $migration
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getAll(): array
     {
         return $this->readFromFile();
