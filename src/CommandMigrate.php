@@ -115,18 +115,30 @@ final class CommandMigrate extends Command
                             $database->getPassword()
                         );
 
-                        $db->query($migration);
+                        $result = $db->query($migration);
+
+                        if ($result === false) {
+                            $errorInfo = $db->errorInfo();
+
+                            throw QueryFailed::withMigrationData(
+                                (string) $errorInfo[2],
+                                $migration,
+                                $database->getConnectionString()
+                            );
+                        }
+
+                        $this->logs->append(
+                            new EventMigrationWasExecuted(
+                                $database->getConnectionString(),
+                                $file->getFilename(),
+                                new \DateTimeImmutable('now')
+                            )
+                        );
+                    } catch (QueryFailed $e) {
+                        $output->writeln($e->getMessage());
                     } catch (PDOException $e) {
                         $output->writeln('Failed');
                     }
-
-                    $this->logs->append(
-                        new EventMigrationWasExecuted(
-                            $database->getConnectionString(),
-                            $file->getFilename(),
-                            new \DateTimeImmutable('now')
-                        )
-                    );
                 }
 
                 $output->writeln('-------------------------------------------------------');
