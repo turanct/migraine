@@ -2,6 +2,9 @@
 
 namespace Turanct\Migrations;
 
+/**
+ * @psalm-suppress UnusedClass
+ */
 final class LogsInMemory implements Logs
 {
     /**

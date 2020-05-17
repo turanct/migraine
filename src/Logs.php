@@ -9,6 +9,8 @@ interface Logs
     public function migrationWasExecuted(string $connectionString, string $migration): bool;
 
     /**
+     * @psalm-suppress PossiblyUnusedMethod
+     *
      * @return Event[]
      */
     public function getAll(): array;
