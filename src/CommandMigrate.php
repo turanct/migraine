@@ -66,12 +66,11 @@ final class CommandMigrate extends Command
             return 1;
         }
 
+        $completedMigrations = new CompletedMigrations();
+
         $groups = $config->getGroups();
 
         foreach ($groups as $group) {
-            $output->writeln("Migrating group \"{$group->getName()}\"");
-            $output->writeln('-------------------------------------------------------');
-
             $finder = new \Symfony\Component\Finder\Finder();
             try {
                 /** @psalm-suppress TooManyArguments */
@@ -92,21 +91,10 @@ final class CommandMigrate extends Command
 
                 $databases = $group->getDatabases();
 
-                $output->writeln('Running migration:');
-                $output->writeln('-------------------------------------------------------');
-                $output->writeln($migration);
-                $output->writeln('-------------------------------------------------------');
-                $output->writeln('On these databases:');
-                $output->writeln('-------------------------------------------------------');
-
                 foreach ($databases as $database) {
                     if ($this->logs->migrationWasExecuted($database->getConnectionString(), $file->getFilename())) {
                         continue;
                     }
-
-                    $dbString = "- {$database->getConnectionString()}";
-
-                    $output->writeln($dbString);
 
                     try {
                         $db = new PDO(
@@ -127,22 +115,26 @@ final class CommandMigrate extends Command
                             );
                         }
 
-                        $this->logs->append(
-                            new EventMigrationWasExecuted(
-                                $database->getConnectionString(),
-                                $file->getFilename(),
-                                new \DateTimeImmutable('now')
-                            )
+                        $migrationWasExecuted = new EventMigrationWasExecuted(
+                            $database->getConnectionString(),
+                            $file->getFilename(),
+                            new \DateTimeImmutable('now')
                         );
+
+                        $this->logs->append($migrationWasExecuted);
+                        $completedMigrations->completed($migrationWasExecuted);
                     } catch (QueryFailed $e) {
                         $output->writeln($e->getMessage());
                     } catch (PDOException $e) {
                         $output->writeln('Failed');
                     }
                 }
-
-                $output->writeln('-------------------------------------------------------');
             }
+        }
+
+        $completedMigrations = $completedMigrations->getList();
+        foreach ($completedMigrations as $completedMigration) {
+            $output->writeln("✅ {$completedMigration->getConnectionString()} ⬅️ {$completedMigration->getMigration()}");
         }
 
         return 0;

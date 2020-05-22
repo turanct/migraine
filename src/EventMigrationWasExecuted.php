@@ -20,6 +20,16 @@ final class EventMigrationWasExecuted implements Event
         $this->time = $time;
     }
 
+    public function getConnectionString(): string
+    {
+        return $this->connectionString;
+    }
+
+    public function getMigration(): string
+    {
+        return $this->migration;
+    }
+
     /**
      * @return array{event: string, connectionString: string, migration: string, time: int}
      */
