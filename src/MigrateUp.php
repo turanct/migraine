@@ -77,7 +77,7 @@ final class MigrateUp
                                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
                             );
 
-                            $result = $db->query($migration);
+                            $result = $db->exec($migration);
 
                             if ($result === false) {
                                 $errorInfo = $db->errorInfo();
