@@ -28,7 +28,7 @@ final class MigrateUp
      * @throws CouldNotGenerateConfig
      * @throws MigrationsDirectoryNotFound
      */
-    public function migrateUp(string $workingDirectory): CompletedMigrations
+    public function migrateUp(string $workingDirectory, bool $commit = false): CompletedMigrations
     {
         $configFile = "{$workingDirectory}/migrations.json";
 
@@ -69,23 +69,25 @@ final class MigrateUp
                     }
 
                     try {
-                        $db = new PDO(
-                            $database->getConnectionString(),
-                            $database->getUser(),
-                            $database->getPassword(),
-                            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-                        );
-
-                        $result = $db->query($migration);
-
-                        if ($result === false) {
-                            $errorInfo = $db->errorInfo();
-
-                            throw QueryFailed::withMigrationData(
-                                (string) $errorInfo[2],
-                                $migration,
-                                $database->getConnectionString()
+                        if ($commit === true) {
+                            $db = new PDO(
+                                $database->getConnectionString(),
+                                $database->getUser(),
+                                $database->getPassword(),
+                                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
                             );
+
+                            $result = $db->query($migration);
+
+                            if ($result === false) {
+                                $errorInfo = $db->errorInfo();
+
+                                throw QueryFailed::withMigrationData(
+                                    (string) $errorInfo[2],
+                                    $migration,
+                                    $database->getConnectionString()
+                                );
+                            }
                         }
 
                         $migrationWasExecuted = new EventMigrationWasExecuted(
@@ -94,7 +96,10 @@ final class MigrateUp
                             new DateTimeImmutable('now')
                         );
 
-                        $this->logs->append($migrationWasExecuted);
+                        if ($commit === true) {
+                            $this->logs->append($migrationWasExecuted);
+                        }
+
                         $completedMigrations->completed($migrationWasExecuted);
                     } catch (QueryFailed $e) {
                         return $completedMigrations;

@@ -46,13 +46,24 @@ final class CommandMigrate extends Command
         $this
             ->setDescription('Run migrations')
             ->setHelp('Run migrations defined in your configuration.');
+
+        $this
+            ->addOption(
+                'commit',
+                null,
+                InputOption::VALUE_NONE,
+                'Actually run the migrations instead of doing a dry-run.',
+                null
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $commit = (bool) $input->getOption('commit');
+
         $migrateUp = new MigrateUp($this->translation, $this->logs);
         try {
-            $completedMigrations = $migrateUp->migrateUp($this->workingDirectory);
+            $completedMigrations = $migrateUp->migrateUp($this->workingDirectory, $commit);
         } catch (\Exception $e) {
             $output->writeln(get_class($e) . ": {$e->getMessage()}");
 
@@ -62,6 +73,11 @@ final class CommandMigrate extends Command
         $completedMigrations = $completedMigrations->getList();
         foreach ($completedMigrations as $completedMigration) {
             $line = "✅ {$completedMigration->getConnectionString()} ⬅️  {$completedMigration->getMigration()}";
+            $output->writeln($line);
+        }
+
+        if ($commit !== true) {
+            $line = 'The above is the result of a dry-run. If you want to execute this, add --commit to the command.';
             $output->writeln($line);
         }
 
