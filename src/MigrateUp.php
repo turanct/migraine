@@ -102,8 +102,12 @@ final class MigrateUp
 
                         $completedMigrations->completed($migrationWasExecuted);
                     } catch (QueryFailed $e) {
+                        $completedMigrations->withError($e->getMessage());
+
                         return $completedMigrations;
                     } catch (PDOException $e) {
+                        $completedMigrations->withError($e->getMessage());
+
                         return $completedMigrations;
                     }
                 }

@@ -83,6 +83,10 @@ final class CommandMigrate extends Command
             $output->writeln($line);
         }
 
+        if ($completedMigrations->failed()) {
+            $output->writeln($completedMigrations->getError());
+        }
+
         if ($commit !== true) {
             $line = 'The above is the result of a dry-run. If you want to execute this, add --commit to the command.';
             $output->writeln($line);
