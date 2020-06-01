@@ -98,6 +98,6 @@ final class LogsJson implements Logs
             $events
         );
 
-        file_put_contents($this->file, json_encode($events));
+        file_put_contents($this->file, json_encode($events, JSON_PRETTY_PRINT));
     }
 }
