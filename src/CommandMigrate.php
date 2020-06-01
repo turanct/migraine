@@ -5,6 +5,7 @@ namespace Turanct\Migrations;
 use PDO;
 use PDOException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -41,6 +42,9 @@ final class CommandMigrate extends Command
         $this->workingDirectory = $workingDirectory;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     protected function configure()
     {
         $this
@@ -57,7 +61,10 @@ final class CommandMigrate extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * @throws InvalidArgumentException
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $commit = (bool) $input->getOption('commit');
 
@@ -70,8 +77,8 @@ final class CommandMigrate extends Command
             return 1;
         }
 
-        $completedMigrations = $completedMigrations->getList();
-        foreach ($completedMigrations as $completedMigration) {
+        $listOfCompletedMigrations = $completedMigrations->getList();
+        foreach ($listOfCompletedMigrations as $completedMigration) {
             $line = "✅ {$completedMigration->getConnectionString()} ⬅️  {$completedMigration->getMigration()}";
             $output->writeln($line);
         }
