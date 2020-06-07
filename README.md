@@ -67,8 +67,17 @@ mkdir migrations/shards
 
 ### Add some migrations
 
+You can use the `new` command to create a new migration:
+
+```sh
+vendor/bin/migrate new main "create users tabel"
+```
+
+it will create this file:
 `migrations/main/20200426195623000-create-users-table.sql`
 
+
+We'll fill it with the migration we want to run:
 ```sql
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL,
@@ -79,8 +88,18 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 ```
 
+
+and this command for the `shards`:
+
+```sh
+vendor/bin/migrate new shards "create data tabel"
+```
+
+will create this file:
 `migrations/shards/20200426195959000-create-data-table.sql`
 
+
+We'll fill it with the migration we want to run:
 ```sql
 CREATE TABLE IF NOT EXISTS `data` (
   `id` int(11) NOT NULL,
@@ -106,13 +125,13 @@ If you want to commit to the migration you just did a dry-run for, commit:
 vendor/bin/migrate --commit
 ```
 
-If you want to only migrate a given group, specify it:
+If you want to only migrate a given group, specify it (**doesn't work yet**):
 
 ```sh
 vendor/bin/migrate --group shards --commit
 ```
 
-If you want to only run a specific migration, specify it:
+If you want to only run a specific migration, specify it (**doesn't work yet**):
 
 ```sh
 vendor/bin/migrate --migration shards/20200426195959000-create-data-table.sql --commit
