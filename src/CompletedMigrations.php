@@ -8,6 +8,10 @@ final class CompletedMigrations
      * @var EventMigrationWasExecuted[]
      */
     private $events = [];
+
+    /**
+     * @var string
+     */
     private $error = '';
 
     public function completed(EventMigrationWasExecuted $event): void

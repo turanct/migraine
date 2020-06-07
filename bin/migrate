@@ -10,6 +10,8 @@ $application = new Application();
 $currentWorkingDirectory = getcwd();
 $translation = new \Turanct\Migrations\ConfigTranslationJson();
 $logs = new \Turanct\Migrations\LogsJson($currentWorkingDirectory . '/logs.json');
+
 $application->add(new \Turanct\Migrations\CommandMigrate($translation, $logs, $currentWorkingDirectory));
+$application->add(new \Turanct\Migrations\CommandNew($translation, $currentWorkingDirectory));
 
 $application->run();
