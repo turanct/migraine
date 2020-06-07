@@ -1,6 +1,5 @@
 /build/*
 /vendor/*
-/phpcs.xml
 /phpunit.xml
 /.env
 
