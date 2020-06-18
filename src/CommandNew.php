@@ -64,7 +64,6 @@ final class CommandNew extends Command
 
     /**
      * @throws CouldNotGenerateConfig
-     * @throws MigrationsDirectoryNotFound
      * @throws InvalidArgumentException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -74,42 +73,16 @@ final class CommandNew extends Command
 
         $suffix = $input->getArgument('suffix');
         $suffix = is_string($suffix) ? $suffix : '';
-        $suffix = preg_replace('/[^a-zA-Z0-9]/i', '-', $suffix);
 
-        $configFile = "{$this->workingDirectory}/migrations.json";
+        $newMigration = new NewMigration($this->translation, $this->workingDirectory);
 
-        if (!is_file($configFile)) {
-            throw new CouldNotGenerateConfig();
-        }
-
-        $filecontents = file_get_contents($configFile);
-
-        $config = $this->translation->translate($filecontents);
-
-        $groups = $config->getGroups();
-
-        $groupNames = array_map(
-            function (Group $group): string {
-                return $group->getName();
-            },
-            $groups
-        );
-
-        if (!in_array($group, $groupNames)) {
-            $output->writeln('Please provide a valid group name: ' . implode(', ', $groupNames));
+        try {
+            $migrationPath = $newMigration->create($group, $suffix);
+        } catch (PleaseProvideValidGroupName $e) {
+            $output->writeln('Please provide a valid group name: ' . implode(', ', $e->getList()));
 
             return 1;
         }
-
-        $now = new DateTimeImmutable('now');
-
-        $name = $now->format('YmdHisv');
-        $name = empty($suffix) ? $name : "{$name}-{$suffix}";
-        $name .= '.sql';
-
-        $migrationPath = "{$this->workingDirectory}/{$config->getMigrationsDirectory()}/{$group}/$name";
-
-        touch($migrationPath);
 
         $output->writeln("Created new migration {$migrationPath}");
 
