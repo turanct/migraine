@@ -5,6 +5,8 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 use Turanct\Migrations\CouldNotGenerateConfig;
+use Turanct\Migrations\MigrateUp;
+use Turanct\Migrations\NewMigration;
 
 $application = new Application();
 
@@ -23,7 +25,10 @@ $config = $translation->translate($currentWorkingDirectory, $filecontents);
 
 $logs = new \Turanct\Migrations\LogsJson($currentWorkingDirectory . '/logs.json');
 
-$application->add(new \Turanct\Migrations\CommandMigrate($config, $logs));
-$application->add(new \Turanct\Migrations\CommandNew($config));
+$migrateUp = new MigrateUp($config, $logs);
+$newMigration = new NewMigration($config);
+
+$application->add(new \Turanct\Migrations\CommandMigrate($migrateUp));
+$application->add(new \Turanct\Migrations\CommandNew($newMigration));
 
 $application->run();

@@ -15,19 +15,20 @@ final class CommandNew extends Command
     protected static $defaultName = 'new';
 
     /**
-     * @var Config
+     * @var NewMigration
      */
-    private $config;
+    private $newMigration;
 
     /**
-     * @param Config $config
+     * @param NewMigration $newMigration
+     *
      * @throws \LogicException
      */
-    public function __construct(Config $config)
+    public function __construct(NewMigration $newMigration)
     {
         parent::__construct();
 
-        $this->config = $config;
+        $this->newMigration = $newMigration;
     }
 
     /**
@@ -68,10 +69,8 @@ final class CommandNew extends Command
         $suffix = $input->getArgument('suffix');
         $suffix = is_string($suffix) ? $suffix : '';
 
-        $newMigration = new NewMigration($this->config);
-
         try {
-            $migrationPath = $newMigration->create($group, $suffix);
+            $migrationPath = $this->newMigration->create($group, $suffix);
         } catch (PleaseProvideValidGroupName $e) {
             $output->writeln('Please provide a valid group name: ' . implode(', ', $e->getList()));
 
