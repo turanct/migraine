@@ -4,7 +4,9 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
+use Turanct\Migrations\ClockNow;
 use Turanct\Migrations\CouldNotGenerateConfig;
+use Turanct\Migrations\FilesystemSymfony;
 use Turanct\Migrations\MigrateUp;
 use Turanct\Migrations\NewMigration;
 
@@ -25,8 +27,13 @@ $config = $translation->translate($currentWorkingDirectory, $filecontents);
 
 $logs = new \Turanct\Migrations\LogsJson($currentWorkingDirectory . '/logs.json');
 
+$filesystemSymfony = new Symfony\Component\Filesystem\Filesystem();
+$filesystem = new FilesystemSymfony($filesystemSymfony);
+
+$clock = new ClockNow();
+
 $migrateUp = new MigrateUp($config, $logs);
-$newMigration = new NewMigration($config);
+$newMigration = new NewMigration($config, $filesystem, $clock);
 
 $application->add(new \Turanct\Migrations\CommandMigrate($migrateUp));
 $application->add(new \Turanct\Migrations\CommandNew($newMigration));

@@ -11,9 +11,21 @@ final class NewMigration
      */
     private $config;
 
-    public function __construct(Config $config)
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    /**
+     * @var Clock
+     */
+    private $clock;
+
+    public function __construct(Config $config, Filesystem $filesystem, Clock $clock)
     {
         $this->config = $config;
+        $this->filesystem = $filesystem;
+        $this->clock = $clock;
     }
 
     /**
@@ -41,7 +53,7 @@ final class NewMigration
             throw PleaseProvideValidGroupName::fromList($groupNames);
         }
 
-        $now = new DateTimeImmutable('now');
+        $now = $this->clock->getTime();
 
         $name = $now->format('YmdHisv');
         $name = empty($suffix) ? $name : "{$name}-{$suffix}";
@@ -49,7 +61,7 @@ final class NewMigration
 
         $migrationPath = "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/{$group}/$name";
 
-        touch($migrationPath);
+        $this->filesystem->touch($migrationPath);
 
         return $migrationPath;
     }
