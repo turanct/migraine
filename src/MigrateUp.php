@@ -26,8 +26,10 @@ final class MigrateUp
 
     /**
      * @param bool $commit
-     * @return CompletedMigrations
+     *
      * @throws MigrationsDirectoryNotFound
+     *
+     * @return CompletedMigrations
      */
     public function migrateUp(bool $commit = false): CompletedMigrations
     {

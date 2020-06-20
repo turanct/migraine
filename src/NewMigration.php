@@ -17,7 +17,12 @@ final class NewMigration
     }
 
     /**
+     * @param string $group
+     * @param string $suffix
+     *
      * @throws PleaseProvideValidGroupName
+     *
+     * @return string
      */
     public function create(string $group, string $suffix): string
     {
