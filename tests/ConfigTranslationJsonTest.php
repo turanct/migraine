@@ -11,6 +11,8 @@ final class ConfigTranslationJsonTest extends TestCase
      */
     public function testItFailsWhenNoCompleteConfigurationIsGiven()
     {
+        $workingDirectory = __DIR__;
+
         $json = '
             {
                 "directory": "migrations",
@@ -24,7 +26,7 @@ final class ConfigTranslationJsonTest extends TestCase
         ';
 
         $translation = new ConfigTranslationJson();
-        $translation->translate($json);
+        $translation->translate($workingDirectory, $json);
     }
 
     /**
@@ -32,9 +34,11 @@ final class ConfigTranslationJsonTest extends TestCase
      */
     public function testItTranslatesJsonConfigToConfigObject(string $json, Config $config)
     {
+        $workingDirectory = __DIR__;
+
         $translation = new ConfigTranslationJson();
 
-        $this->assertEquals($config, $translation->translate($json));
+        $this->assertEquals($config, $translation->translate($workingDirectory, $json));
     }
 
     public function configTranslations(): array
@@ -52,6 +56,7 @@ final class ConfigTranslationJsonTest extends TestCase
                     }
                 }',
                 new Config(
+                    __DIR__,
                     'migrations',
                     [
                         new Group(
@@ -73,6 +78,7 @@ final class ConfigTranslationJsonTest extends TestCase
                     }
                 }',
                 new Config(
+                    __DIR__,
                     'migrations',
                     [
                         new Group(
@@ -110,6 +116,7 @@ final class ConfigTranslationJsonTest extends TestCase
                     }
                 }',
                 new Config(
+                    __DIR__,
                     'migrations',
                     [
                         new Group(
@@ -151,6 +158,7 @@ final class ConfigTranslationJsonTest extends TestCase
                     }
                 }',
                 new Config(
+                    __DIR__,
                     'migrations',
                     [
                         new Group(

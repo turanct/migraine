@@ -7,22 +7,30 @@ namespace Turanct\Migrations;
  */
 final class Config
 {
-    private $directory;
+    private $workingDirectory;
+    private $migrationsDirectory;
     private $groups;
 
     /**
-     * @param string $directory
+     * @param string $workingDirectory
+     * @param string $migrationsDirectory
      * @param Group[] $groups
      */
-    public function __construct(string $directory, array $groups)
+    public function __construct(string $workingDirectory, string $migrationsDirectory, array $groups)
     {
-        $this->directory = $directory;
+        $this->workingDirectory = $workingDirectory;
+        $this->migrationsDirectory = $migrationsDirectory;
         $this->groups = $groups;
+    }
+
+    public function getWorkingDirectory(): string
+    {
+        return $this->workingDirectory;
     }
 
     public function getMigrationsDirectory(): string
     {
-        return $this->directory;
+        return $this->migrationsDirectory;
     }
 
     /**

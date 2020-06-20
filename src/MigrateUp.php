@@ -38,7 +38,7 @@ final class MigrateUp
 
         $filecontents = file_get_contents($configFile);
 
-        $config = $this->translation->translate($filecontents);
+        $config = $this->translation->translate($workingDirectory, $filecontents);
 
         $completedMigrations = new CompletedMigrations();
 

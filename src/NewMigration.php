@@ -38,7 +38,7 @@ final class NewMigration
 
         $filecontents = file_get_contents($configFile);
 
-        $config = $this->translation->translate($filecontents);
+        $config = $this->translation->translate($this->workingDirectory, $filecontents);
 
         $groups = $config->getGroups();
 
@@ -59,7 +59,7 @@ final class NewMigration
         $name = empty($suffix) ? $name : "{$name}-{$suffix}";
         $name .= '.sql';
 
-        $migrationPath = "{$this->workingDirectory}/{$config->getMigrationsDirectory()}/{$group}/$name";
+        $migrationPath = "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group}/$name";
 
         touch($migrationPath);
 

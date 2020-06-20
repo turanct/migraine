@@ -7,5 +7,5 @@ interface ConfigTranslation
     /**
      * @throws CouldNotGenerateConfig
      */
-    public function translate(string $json): Config;
+    public function translate(string $workingDirectory, string $json): Config;
 }

@@ -4,14 +4,14 @@ namespace Turanct\Migrations;
 
 final class ConfigTranslationJson implements ConfigTranslation
 {
-    public function translate(string $json): Config
+    public function translate(string $workingDirectory, string $json): Config
     {
         $parsedJson = (array) json_decode($json, true);
         if (empty($parsedJson)) {
             throw new CouldNotGenerateConfig();
         }
 
-        $directory = (string) $parsedJson['directory'] ?: 'migrations';
+        $migrationsDirectory = (string) $parsedJson['directory'] ?: 'migrations';
 
         $parsedGroups = (array) $parsedJson['groups'] ?: [];
 
@@ -63,7 +63,7 @@ final class ConfigTranslationJson implements ConfigTranslation
             $groups[] = new Group((string) $name, $databases);
         }
 
-        return new Config($directory, $groups);
+        return new Config($workingDirectory, $migrationsDirectory, $groups);
     }
 
     /**
