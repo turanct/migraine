@@ -15,24 +15,19 @@ final class CommandNew extends Command
     protected static $defaultName = 'new';
 
     /**
-     * @var ConfigTranslation
+     * @var Config
      */
-    private $translation;
+    private $config;
 
     /**
-     * @var string
-     */
-    private $workingDirectory;
-
-    /**
+     * @param Config $config
      * @throws \LogicException
      */
-    public function __construct(ConfigTranslation $translation, string $workingDirectory)
+    public function __construct(Config $config)
     {
         parent::__construct();
 
-        $this->translation = $translation;
-        $this->workingDirectory = $workingDirectory;
+        $this->config = $config;
     }
 
     /**
@@ -63,7 +58,6 @@ final class CommandNew extends Command
     }
 
     /**
-     * @throws CouldNotGenerateConfig
      * @throws InvalidArgumentException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -74,7 +68,7 @@ final class CommandNew extends Command
         $suffix = $input->getArgument('suffix');
         $suffix = is_string($suffix) ? $suffix : '';
 
-        $newMigration = new NewMigration($this->translation, $this->workingDirectory);
+        $newMigration = new NewMigration($this->config);
 
         try {
             $migrationPath = $newMigration->create($group, $suffix);

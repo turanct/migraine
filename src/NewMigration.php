@@ -7,40 +7,23 @@ use DateTimeImmutable;
 final class NewMigration
 {
     /**
-     * @var ConfigTranslation
+     * @var Config
      */
-    private $translation;
+    private $config;
 
-    /**
-     * @var string
-     */
-    private $workingDirectory;
-
-    public function __construct(ConfigTranslation $translation, string $workingDirectory)
+    public function __construct(Config $config)
     {
-        $this->translation = $translation;
-        $this->workingDirectory = $workingDirectory;
+        $this->config = $config;
     }
 
     /**
-     * @throws CouldNotGenerateConfig
      * @throws PleaseProvideValidGroupName
      */
     public function create(string $group, string $suffix): string
     {
         $suffix = preg_replace('/[^a-zA-Z0-9]/i', '-', $suffix);
 
-        $configFile = "{$this->workingDirectory}/migrations.json";
-
-        if (!is_file($configFile)) {
-            throw new CouldNotGenerateConfig();
-        }
-
-        $filecontents = file_get_contents($configFile);
-
-        $config = $this->translation->translate($this->workingDirectory, $filecontents);
-
-        $groups = $config->getGroups();
+        $groups = $this->config->getGroups();
 
         $groupNames = array_map(
             function (Group $group): string {
@@ -59,7 +42,7 @@ final class NewMigration
         $name = empty($suffix) ? $name : "{$name}-{$suffix}";
         $name .= '.sql';
 
-        $migrationPath = "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group}/$name";
+        $migrationPath = "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/{$group}/$name";
 
         touch($migrationPath);
 

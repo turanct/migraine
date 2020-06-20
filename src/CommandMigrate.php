@@ -16,9 +16,9 @@ final class CommandMigrate extends Command
     protected static $defaultName = 'migrate';
 
     /**
-     * @var ConfigTranslation
+     * @var Config
      */
-    private $translation;
+    private $config;
 
     /**
      * @var Logs
@@ -26,20 +26,17 @@ final class CommandMigrate extends Command
     private $logs;
 
     /**
-     * @var string
-     */
-    private $workingDirectory;
-
-    /**
+     * @param Config $config
+     * @param Logs $logs
+     *
      * @throws \LogicException
      */
-    public function __construct(ConfigTranslation $translation, Logs $logs, string $workingDirectory)
+    public function __construct(Config $config, Logs $logs)
     {
         parent::__construct();
 
-        $this->translation = $translation;
+        $this->config = $config;
         $this->logs = $logs;
-        $this->workingDirectory = $workingDirectory;
     }
 
     /**
@@ -68,9 +65,9 @@ final class CommandMigrate extends Command
     {
         $commit = (bool) $input->getOption('commit');
 
-        $migrateUp = new MigrateUp($this->translation, $this->logs);
+        $migrateUp = new MigrateUp($this->config, $this->logs);
         try {
-            $completedMigrations = $migrateUp->migrateUp($this->workingDirectory, $commit);
+            $completedMigrations = $migrateUp->migrateUp($commit);
         } catch (\Exception $e) {
             $output->writeln(get_class($e) . ": {$e->getMessage()}");
 

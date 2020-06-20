@@ -9,40 +9,31 @@ use PDOException;
 final class MigrateUp
 {
     /**
-     * @var ConfigTranslation
+     * @var Config
      */
-    private $translation;
+    private $config;
 
     /**
      * @var Logs
      */
     private $logs;
 
-    public function __construct(ConfigTranslation $translation, Logs $logs)
+    public function __construct(Config $config, Logs $logs)
     {
-        $this->translation = $translation;
+        $this->config = $config;
         $this->logs = $logs;
     }
 
     /**
-     * @throws CouldNotGenerateConfig
+     * @param bool $commit
+     * @return CompletedMigrations
      * @throws MigrationsDirectoryNotFound
      */
-    public function migrateUp(string $workingDirectory, bool $commit = false): CompletedMigrations
+    public function migrateUp(bool $commit = false): CompletedMigrations
     {
-        $configFile = "{$workingDirectory}/migrations.json";
-
-        if (!is_file($configFile)) {
-            throw new CouldNotGenerateConfig();
-        }
-
-        $filecontents = file_get_contents($configFile);
-
-        $config = $this->translation->translate($workingDirectory, $filecontents);
-
         $completedMigrations = new CompletedMigrations();
 
-        $groups = $config->getGroups();
+        $groups = $this->config->getGroups();
 
         foreach ($groups as $group) {
             $finder = new \Symfony\Component\Finder\Finder();
@@ -50,7 +41,7 @@ final class MigrateUp
                 /** @psalm-suppress TooManyArguments */
                 $files = $finder
                     ->files()
-                    ->in("{$workingDirectory}/{$config->getMigrationsDirectory()}/{$group->getName()}")
+                    ->in("{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/{$group->getName()}")
                     ->name('*.sql')
                     ->sortByName(true);
             } catch (\Symfony\Component\Finder\Exception\DirectoryNotFoundException $e) {
