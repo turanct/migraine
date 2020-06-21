@@ -37,5 +37,6 @@ $newMigration = new NewMigration($config, $filesystem, $clock);
 
 $application->add(new \Turanct\Migrations\CommandMigrate($migrateUp));
 $application->add(new \Turanct\Migrations\CommandNew($newMigration));
+$application->add(new \Turanct\Migrations\CommandSeed($migrateUp));
 
 $application->run();
