@@ -138,6 +138,48 @@ vendor/bin/migrate migrate --migration shards/20200426195959000-create-data-tabl
 ```
 
 
+### Seeding
+
+You can use the `new-seed` command to create a new seed (**doesn't work yet**):
+
+```sh
+vendor/bin/migrate new-seed main "scaffold users"
+```
+
+it will create this file:
+`migrations/main/seeds/20200426195623000-scaffold-users.sql`
+
+
+We'll fill it with the migration we want to run:
+```sql
+INSERT INTO `users` (`id`, `name`, `email`)
+VALUES ('1', 'admin', 'admin@example.com');
+```
+
+This is how you run all seeds. We'll automatically dry-run your migration (**doesn't work yet**):
+
+```sh
+vendor/bin/migrate seed
+```
+
+If you want to commit to the migration you just did a dry-run for, commit (**doesn't work yet**):
+
+```sh
+vendor/bin/migrate seed --commit
+```
+
+If you want to only seed a given group, specify it (**doesn't work yet**):
+
+```sh
+vendor/bin/migrate seed --group shards --commit
+```
+
+If you want to only run a specific migration, specify it (**doesn't work yet**):
+
+```sh
+vendor/bin/migrate seed --seed shards/20200426195959000-seed-data-table.sql --commit
+```
+
 
 ## Contributing
 
