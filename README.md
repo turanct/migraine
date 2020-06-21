@@ -116,25 +116,25 @@ CREATE TABLE IF NOT EXISTS `data` (
 This is how you run all migrations. We'll automatically dry-run your migration:
 
 ```sh
-vendor/bin/migrate
+vendor/bin/migrate migrate
 ```
 
 If you want to commit to the migration you just did a dry-run for, commit:
 
 ```sh
-vendor/bin/migrate --commit
+vendor/bin/migrate migrate --commit
 ```
 
 If you want to only migrate a given group, specify it (**doesn't work yet**):
 
 ```sh
-vendor/bin/migrate --group shards --commit
+vendor/bin/migrate migrate --group shards --commit
 ```
 
 If you want to only run a specific migration, specify it (**doesn't work yet**):
 
 ```sh
-vendor/bin/migrate --migration shards/20200426195959000-create-data-table.sql --commit
+vendor/bin/migrate migrate --migration shards/20200426195959000-create-data-table.sql --commit
 ```
 
 
