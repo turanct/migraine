@@ -125,13 +125,13 @@ If you want to commit to the migration you just did a dry-run for, commit:
 vendor/bin/migrate migrate --commit
 ```
 
-If you want to only migrate a given group, specify it (**doesn't work yet**):
+If you want to only migrate a given group, specify it:
 
 ```sh
 vendor/bin/migrate migrate --group shards --commit
 ```
 
-If you want to only run a specific migration, specify it (**doesn't work yet**):
+If you want to only run a specific migration, specify it:
 
 ```sh
 vendor/bin/migrate migrate --migration 20200426195959000-create-data-table.sql --commit
@@ -140,17 +140,20 @@ vendor/bin/migrate migrate --migration 20200426195959000-create-data-table.sql -
 
 ### Seeding
 
-You can use the `new-seed` command to create a new seed (**doesn't work yet**):
+You can create seeds by adding a `/seeds` directory to a group's directory.
+In that directory, you can add files just like any other migration.
 
 ```sh
-vendor/bin/migrate new-seed main "scaffold users"
+mkdir main/seeds
+
+touch main/seeds/20200426195623000-seed-users.sql
 ```
 
 it will create this file:
-`migrations/main/seeds/20200426195623000-scaffold-users.sql`
+`migrations/main/seeds/20200426195623000-seed-users.sql`
 
 
-We'll fill it with the migration we want to run:
+Fill it with the migration you want to run:
 ```sql
 INSERT INTO `users` (`id`, `name`, `email`)
 VALUES ('1', 'admin', 'admin@example.com');
@@ -159,7 +162,7 @@ VALUES ('1', 'admin', 'admin@example.com');
 If you want to apply a specific seed, specify it
 
 ```sh
-vendor/bin/migrate seed --seed 20200426195959000-seed-data-table.sql --commit
+vendor/bin/migrate seed --seed seeds/20200426195623000-seed-users
 ```
 
 
