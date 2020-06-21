@@ -134,7 +134,7 @@ vendor/bin/migrate migrate --group shards --commit
 If you want to only run a specific migration, specify it (**doesn't work yet**):
 
 ```sh
-vendor/bin/migrate migrate --migration shards/20200426195959000-create-data-table.sql --commit
+vendor/bin/migrate migrate --migration 20200426195959000-create-data-table.sql --commit
 ```
 
 
@@ -156,28 +156,10 @@ INSERT INTO `users` (`id`, `name`, `email`)
 VALUES ('1', 'admin', 'admin@example.com');
 ```
 
-This is how you run all seeds. We'll automatically dry-run your migration (**doesn't work yet**):
+If you want to apply a specific seed, specify it
 
 ```sh
-vendor/bin/migrate seed
-```
-
-If you want to commit to the migration you just did a dry-run for, commit (**doesn't work yet**):
-
-```sh
-vendor/bin/migrate seed --commit
-```
-
-If you want to only seed a given group, specify it (**doesn't work yet**):
-
-```sh
-vendor/bin/migrate seed --group shards --commit
-```
-
-If you want to only run a specific migration, specify it (**doesn't work yet**):
-
-```sh
-vendor/bin/migrate seed --seed shards/20200426195959000-seed-data-table.sql --commit
+vendor/bin/migrate seed --seed 20200426195959000-seed-data-table.sql --commit
 ```
 
 

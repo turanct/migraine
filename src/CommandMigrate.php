@@ -43,6 +43,24 @@ final class CommandMigrate extends Command
 
         $this
             ->addOption(
+                'group',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Migrate a single group',
+                ''
+            );
+
+        $this
+            ->addOption(
+                'migration',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Migrate a single migration',
+                ''
+            );
+
+        $this
+            ->addOption(
                 'commit',
                 null,
                 InputOption::VALUE_NONE,
@@ -58,8 +76,18 @@ final class CommandMigrate extends Command
     {
         $commit = (bool) $input->getOption('commit');
 
+        $group = $input->getOption('group');
+        $group = is_string($group) ? $group : '';
+
+        $singleMigration = $input->getOption('migration');
+        $singleMigration = is_string($singleMigration) ? $singleMigration : '';
+
         try {
-            $completedMigrations = $this->migrateUp->migrateUp($commit);
+            if (!empty($singleMigration)) {
+                $completedMigrations = $this->migrateUp->migrateSingle($commit, $singleMigration);
+            } else {
+                $completedMigrations = $this->migrateUp->migrateUp($commit, $group);
+            }
         } catch (\Exception $e) {
             $output->writeln(get_class($e) . ": {$e->getMessage()}");
 
