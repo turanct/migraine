@@ -2,7 +2,6 @@
 
 namespace Turanct\Migrations;
 
-use DateTimeImmutable;
 use PDO;
 use PDOException;
 
@@ -18,10 +17,16 @@ final class MigrateUp
      */
     private $logs;
 
-    public function __construct(Config $config, Logs $logs)
+    /**
+     * @var Clock
+     */
+    private $clock;
+
+    public function __construct(Config $config, Logs $logs, Clock $clock)
     {
         $this->config = $config;
         $this->logs = $logs;
+        $this->clock = $clock;
     }
 
     /**
@@ -92,7 +97,7 @@ final class MigrateUp
                         $migrationWasExecuted = new EventMigrationWasExecuted(
                             $database->getConnectionString(),
                             $file->getFilename(),
-                            new DateTimeImmutable('now')
+                            $this->clock->getTime()
                         );
 
                         if ($commit === true) {
@@ -177,12 +182,88 @@ final class MigrateUp
                     $migrationWasExecuted = new EventMigrationWasExecuted(
                         $database->getConnectionString(),
                         $file->getFilename(),
-                        new DateTimeImmutable('now')
+                        $this->clock->getTime()
                     );
 
                     if ($commit === true) {
                         $this->logs->append($migrationWasExecuted);
                     }
+
+                    $completedMigrations->completed($migrationWasExecuted);
+                } catch (QueryFailed $e) {
+                    $completedMigrations->withError($e->getMessage());
+
+                    return $completedMigrations;
+                } catch (PDOException $e) {
+                    $completedMigrations->withError($e->getMessage());
+
+                    return $completedMigrations;
+                }
+            }
+        }
+
+        return $completedMigrations;
+    }
+
+    /**
+     * @param bool $commit
+     * @param string $seedName
+     *
+     * @return CompletedMigrations
+     */
+    public function seed(bool $commit, string $seedName): CompletedMigrations
+    {
+        $completedMigrations = new CompletedMigrations();
+
+        if (empty($seedName)) {
+            $completedMigrations->withError('Provide a valid seed name.');
+
+            return $completedMigrations;
+        }
+
+        $groups = $this->config->getGroups();
+
+        foreach ($groups as $group) {
+            $migrationPath = "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/";
+            $migrationPath.= "{$group->getName()}/{$seedName}";
+
+            $file = new \SplFileInfo($migrationPath);
+            if (!$file->isFile()) {
+                continue;
+            }
+
+            $migration = file_get_contents($file->getRealPath());
+
+            $databases = $group->getDatabases();
+
+            foreach ($databases as $database) {
+                try {
+                    if ($commit === true) {
+                        $db = new PDO(
+                            $database->getConnectionString(),
+                            $database->getUser(),
+                            $database->getPassword(),
+                            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+                        );
+
+                        $result = $db->exec($migration);
+
+                        if ($result === false) {
+                            $errorInfo = $db->errorInfo();
+
+                            throw QueryFailed::withMigrationData(
+                                (string) $errorInfo[2],
+                                $migration,
+                                $database->getConnectionString()
+                            );
+                        }
+                    }
+
+                    $migrationWasExecuted = new EventMigrationWasExecuted(
+                        $database->getConnectionString(),
+                        $file->getFilename(),
+                        $this->clock->getTime()
+                    );
 
                     $completedMigrations->completed($migrationWasExecuted);
                 } catch (QueryFailed $e) {

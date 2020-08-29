@@ -71,7 +71,7 @@ final class CommandSeed extends Command
         $commit = (bool) $input->getOption('commit');
 
         try {
-            $completedMigrations = $this->migrateUp->migrateSingle($commit, $seed);
+            $completedMigrations = $this->migrateUp->seed($commit, $seed);
         } catch (\Exception $e) {
             $output->writeln(get_class($e) . ": {$e->getMessage()}");
 
