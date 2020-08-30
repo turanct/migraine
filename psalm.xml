@@ -10,5 +10,8 @@
     <projectFiles>
         <file name="bin/migrate" />
         <directory name="src" />
+        <ignoreFiles>
+            <file name="src/ClockFixed.php" />
+        </ignoreFiles>
     </projectFiles>
 </psalm>
