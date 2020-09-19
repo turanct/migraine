@@ -14,8 +14,10 @@ Use this package at your own risk.
 ## Goals
 
 - [x] Write migrations as simple SQL statements
+- [x] Be framework agnostic
 - [x] Run migrations on multiple databases 
 - [x] Run different migrations on different groups of databases
+- [x] Allow seeding of the databases
 - [ ] Have the ability to roll back migrations
 
 
