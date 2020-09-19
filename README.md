@@ -1,4 +1,4 @@
-# Migraine
+# 🤯 Migraine
 
 [![Build Status][ico-travis]][link-travis]
 
