@@ -1,9 +1,22 @@
-# Migrations
+# Migraine
 
 [![Build Status][ico-travis]][link-travis]
 
 
 A simple way of providing database migrations to your project
+
+
+## Disclaimer
+
+Use this package at your own risk.
+
+
+## Goals
+
+- [x] Write migrations as simple SQL statements
+- [x] Run migrations on multiple databases 
+- [x] Run different migrations on different groups of databases
+- [ ] Have the ability to roll back migrations
 
 
 ## Usage
@@ -12,7 +25,7 @@ A simple way of providing database migrations to your project
 ### Install using Composer
 
 ```sh
-composer require "turanct/migrations"
+composer require "turanct/migraine"
 ```
 
 ### Provide a config file
@@ -70,7 +83,7 @@ mkdir migrations/shards
 You can use the `new` command to create a new migration:
 
 ```sh
-vendor/bin/migrate new main "create users tabel"
+vendor/bin/migraine new main "create users tabel"
 ```
 
 it will create this file:
@@ -92,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 and this command for the `shards`:
 
 ```sh
-vendor/bin/migrate new shards "create data tabel"
+vendor/bin/migraine new shards "create data tabel"
 ```
 
 will create this file:
@@ -116,25 +129,25 @@ CREATE TABLE IF NOT EXISTS `data` (
 This is how you run all migrations. We'll automatically dry-run your migration:
 
 ```sh
-vendor/bin/migrate migrate
+vendor/bin/migraine migrate
 ```
 
 If you want to commit to the migration you just did a dry-run for, commit:
 
 ```sh
-vendor/bin/migrate migrate --commit
+vendor/bin/migraine migrate --commit
 ```
 
 If you want to only migrate a given group, specify it:
 
 ```sh
-vendor/bin/migrate migrate --group shards --commit
+vendor/bin/migraine migrate --group shards --commit
 ```
 
 If you want to only run a specific migration, specify it:
 
 ```sh
-vendor/bin/migrate migrate --migration 20200426195959000-create-data-table.sql --commit
+vendor/bin/migraine migrate --migration 20200426195959000-create-data-table.sql --commit
 ```
 
 
@@ -162,7 +175,7 @@ VALUES ('1', 'admin', 'admin@example.com');
 If you want to apply a specific seed, specify it
 
 ```sh
-vendor/bin/migrate seed --seed seeds/20200426195623000-seed-users
+vendor/bin/migraine seed --seed seeds/20200426195623000-seed-users
 ```
 
 
@@ -180,5 +193,5 @@ If you discover any security related issues, please email spinnewebber_toon@hotm
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-[ico-travis]: https://img.shields.io/travis/turanct/migrations/master.svg?style=flat-square
-[link-travis]: https://travis-ci.org/turanct/migrations
+[ico-travis]: https://img.shields.io/travis/turanct/migraine/master.svg?style=flat-square
+[link-travis]: https://travis-ci.org/turanct/migraine

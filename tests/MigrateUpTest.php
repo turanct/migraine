@@ -1,6 +1,6 @@
 <?php
 
-namespace Turanct\Migrations;
+namespace Turanct\Migraine;
 
 use PHPUnit\Framework\TestCase;
 
@@ -191,7 +191,7 @@ final class MigrateUpTest extends TestCase
     }
 
     /**
-     * @expectedException \Turanct\Migrations\MigrationsDirectoryNotFound
+     * @expectedException \Turanct\Migraine\MigrationsDirectoryNotFound
      */
     public function test_it_fails_when_the_group_directory_does_not_exist()
     {

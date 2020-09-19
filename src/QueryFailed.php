@@ -1,6 +1,6 @@
 <?php
 
-namespace Turanct\Migrations;
+namespace Turanct\Migraine;
 
 /**
  * @psalm-suppress MissingConstructor

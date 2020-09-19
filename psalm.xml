@@ -8,7 +8,7 @@
     findUnusedCode="true"
 >
     <projectFiles>
-        <file name="bin/migrate" />
+        <file name="bin/migraine" />
         <directory name="src" />
         <ignoreFiles>
             <file name="src/ClockFixed.php" />

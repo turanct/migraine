@@ -1,12 +1,12 @@
 {
-    "name": "turanct/migrations",
+    "name": "turanct/migraine",
     "type": "library",
     "description": "",
     "keywords": [
         "database",
         "migrations"
     ],
-    "homepage": "https://github.com/turanct/migrations",
+    "homepage": "https://github.com/turanct/migraine",
     "license": "MIT",
     "authors": [
         {
@@ -30,16 +30,16 @@
     },
     "autoload": {
         "psr-4": {
-            "Turanct\\Migrations\\": "src"
+            "Turanct\\Migraine\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Turanct\\Migrations\\": "tests"
+            "Turanct\\Migraine\\": "tests"
         }
     },
     "bin": [
-        "bin/migrate"
+        "bin/migraine"
     ],
     "scripts": {
         "test": "phpunit",

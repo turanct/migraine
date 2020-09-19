@@ -4,17 +4,17 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use Turanct\Migrations\ClockNow;
-use Turanct\Migrations\CouldNotGenerateConfig;
-use Turanct\Migrations\FilesystemSymfony;
-use Turanct\Migrations\MigrateUp;
-use Turanct\Migrations\NewMigration;
+use Turanct\Migraine\ClockNow;
+use Turanct\Migraine\CouldNotGenerateConfig;
+use Turanct\Migraine\FilesystemSymfony;
+use Turanct\Migraine\MigrateUp;
+use Turanct\Migraine\NewMigration;
 
 $application = new Application();
 
 $currentWorkingDirectory = getcwd();
 
-$translation = new \Turanct\Migrations\ConfigTranslationJson();
+$translation = new \Turanct\Migraine\ConfigTranslationJson();
 
 $configFile = "{$currentWorkingDirectory}/migrations.json";
 if (!is_file($configFile)) {
@@ -25,7 +25,7 @@ $filecontents = file_get_contents($configFile);
 
 $config = $translation->translate($currentWorkingDirectory, $filecontents);
 
-$logs = new \Turanct\Migrations\LogsJson($currentWorkingDirectory . '/logs.json');
+$logs = new \Turanct\Migraine\LogsJson($currentWorkingDirectory . '/logs.json');
 
 $filesystemSymfony = new Symfony\Component\Filesystem\Filesystem();
 $filesystem = new FilesystemSymfony($filesystemSymfony);
@@ -35,8 +35,8 @@ $clock = new ClockNow();
 $migrateUp = new MigrateUp($config, $logs, $clock);
 $newMigration = new NewMigration($config, $filesystem, $clock);
 
-$application->add(new \Turanct\Migrations\CommandMigrate($migrateUp));
-$application->add(new \Turanct\Migrations\CommandNew($newMigration));
-$application->add(new \Turanct\Migrations\CommandSeed($migrateUp));
+$application->add(new \Turanct\Migraine\CommandMigrate($migrateUp));
+$application->add(new \Turanct\Migraine\CommandNew($newMigration));
+$application->add(new \Turanct\Migraine\CommandSeed($migrateUp));
 
 $application->run();

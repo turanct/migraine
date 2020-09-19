@@ -1,13 +1,13 @@
 <?php
 
-namespace Turanct\Migrations;
+namespace Turanct\Migraine;
 
 use PHPUnit\Framework\TestCase;
 
 final class NewMigrationTest extends TestCase
 {
     /**
-     * @expectedException \Turanct\Migrations\PleaseProvideValidGroupName
+     * @expectedException \Turanct\Migraine\PleaseProvideValidGroupName
      */
     public function test_it_errors_when_group_is_non_existing()
     {

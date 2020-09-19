@@ -1,6 +1,6 @@
 <?php
 
-namespace Turanct\Migrations;
+namespace Turanct\Migraine;
 
 use PDO;
 use PDOException;

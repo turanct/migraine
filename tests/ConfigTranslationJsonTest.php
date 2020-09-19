@@ -1,13 +1,13 @@
 <?php
 
-namespace Turanct\Migrations;
+namespace Turanct\Migraine;
 
 use PHPUnit\Framework\TestCase;
 
 final class ConfigTranslationJsonTest extends TestCase
 {
     /**
-     * @expectedException \Turanct\Migrations\CouldNotGenerateConfig
+     * @expectedException \Turanct\Migraine\CouldNotGenerateConfig
      */
     public function testItFailsWhenNoCompleteConfigurationIsGiven()
     {

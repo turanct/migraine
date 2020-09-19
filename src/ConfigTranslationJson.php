@@ -1,6 +1,6 @@
 <?php
 
-namespace Turanct\Migrations;
+namespace Turanct\Migraine;
 
 final class ConfigTranslationJson implements ConfigTranslation
 {
