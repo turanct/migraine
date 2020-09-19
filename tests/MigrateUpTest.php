@@ -6,8 +6,6 @@ use PHPUnit\Framework\TestCase;
 
 final class MigrateUpTest extends TestCase
 {
-    private $connectionString = 'sqlite:test';
-
     public function test_it_runs_a_single_migration()
     {
         $this->clearDatabase();
@@ -15,7 +13,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
-            [new Group('single-migration-test', [new Database($this->connectionString, '', '')])]
+            [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
         $logs = new LogsInMemory();
@@ -31,7 +29,7 @@ final class MigrateUpTest extends TestCase
         $expectedInfo = new CompletedMigrations();
         $expectedInfo->completed(
             new EventMigrationWasExecuted(
-                $this->connectionString,
+                $this->connectionString(),
                 $migrationName,
                 $time
             )
@@ -39,7 +37,7 @@ final class MigrateUpTest extends TestCase
 
         $this->assertEquals($expectedInfo, $actualInfo);
 
-        $realDBConnection = new \PDO($this->connectionString);
+        $realDBConnection = new \PDO($this->connectionString());
         $result = $realDBConnection->query('SELECT name FROM sqlite_master WHERE type="table"');
         $tables = $result->fetchAll();
         $this->assertEquals([['test', 'name' => 'test']], $tables);
@@ -52,7 +50,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
-            [new Group('single-migration-test', [new Database($this->connectionString, '', '')])]
+            [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
         $logs = new LogsInMemory();
@@ -68,7 +66,7 @@ final class MigrateUpTest extends TestCase
         $expectedInfo = new CompletedMigrations();
         $expectedInfo->completed(
             new EventMigrationWasExecuted(
-                $this->connectionString,
+                $this->connectionString(),
                 $migrationName,
                 $time
             )
@@ -76,7 +74,7 @@ final class MigrateUpTest extends TestCase
 
         $this->assertEquals($expectedInfo, $actualInfo);
 
-        $this->assertEquals(false, file_exists($dbFile));
+        $this->assertEquals(false, file_exists($this->dbFile()));
     }
 
     public function test_it_fails_a_single_migration_when_the_file_is_corrupt()
@@ -86,7 +84,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
-            [new Group('single-migration-test', [new Database($this->connectionString, '', '')])]
+            [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
         $logs = new LogsInMemory();
@@ -112,7 +110,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
-            [new Group('all-migrations-test', [new Database($this->connectionString, '', '')])]
+            [new Group('all-migrations-test', [new Database($this->connectionString(), '', '')])]
         );
 
         $logs = new LogsInMemory();
@@ -127,14 +125,14 @@ final class MigrateUpTest extends TestCase
         $expectedInfo = new CompletedMigrations();
         $expectedInfo->completed(
             new EventMigrationWasExecuted(
-                $this->connectionString,
+                $this->connectionString(),
                 'migration-1.sql',
                 $time
             )
         );
         $expectedInfo->completed(
             new EventMigrationWasExecuted(
-                $this->connectionString,
+                $this->connectionString(),
                 'migration-2.sql',
                 $time
             )
@@ -144,7 +142,7 @@ final class MigrateUpTest extends TestCase
 
         $expectedStructure = "CREATE TABLE `test` (\n    `id` varchar(255) NOT NULL\n, `name` varchar(255))";
 
-        $realDBConnection = new \PDO($this->connectionString);
+        $realDBConnection = new \PDO($this->connectionString());
         $result = $realDBConnection->query('SELECT `sql` FROM `sqlite_master` WHERE `name` = "test"');
         $tables = $result->fetchAll();
         $this->assertEquals($expectedStructure, $tables[0]['sql']);
@@ -157,7 +155,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
-            [new Group('all-migrations-test', [new Database($this->connectionString, '', '')])]
+            [new Group('all-migrations-test', [new Database($this->connectionString(), '', '')])]
         );
 
         $logs = new LogsInMemory();
@@ -172,14 +170,14 @@ final class MigrateUpTest extends TestCase
         $expectedInfo = new CompletedMigrations();
         $expectedInfo->completed(
             new EventMigrationWasExecuted(
-                $this->connectionString,
+                $this->connectionString(),
                 'migration-1.sql',
                 $time
             )
         );
         $expectedInfo->completed(
             new EventMigrationWasExecuted(
-                $this->connectionString,
+                $this->connectionString(),
                 'migration-2.sql',
                 $time
             )
@@ -187,7 +185,7 @@ final class MigrateUpTest extends TestCase
 
         $this->assertEquals($expectedInfo, $actualInfo);
 
-        $this->assertEquals(false, file_exists($dbFile));
+        $this->assertEquals(false, file_exists($this->dbFile()));
     }
 
     /**
@@ -200,7 +198,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures-that-dont-exist',
-            [new Group('non-existing-group', [new Database($this->connectionString, '', '')])]
+            [new Group('non-existing-group', [new Database($this->connectionString(), '', '')])]
         );
 
         $logs = new LogsInMemory();
@@ -215,9 +213,19 @@ final class MigrateUpTest extends TestCase
 
     private function clearDatabase(): void
     {
-        $dbFile = __DIR__ . '/test';
+        $dbFile = $this->dbFile();
         if (file_exists($dbFile)) {
             unlink($dbFile);
         }
+    }
+
+    private function connectionString()
+    {
+        return "sqlite:{$this->dbFile()}";
+    }
+
+    private function dbFile()
+    {
+        return __DIR__ . '/test';
     }
 }
