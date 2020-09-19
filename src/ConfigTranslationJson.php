@@ -30,11 +30,11 @@ final class ConfigTranslationJson implements ConfigTranslation
                 $databases[] = new Database($connection, $user, $password);
             }
 
+            $fixedFields = array('connection', 'user', 'password');
+
             $shards = array_filter(
                 array_keys($parsedGroup),
-                function ($key) {
-                    $fixedFields = array('connection', 'user', 'password');
-
+                function ($key) use ($fixedFields) {
                     return !in_array($key, $fixedFields, true);
                 }
             );
