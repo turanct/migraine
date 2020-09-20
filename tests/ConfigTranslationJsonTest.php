@@ -44,7 +44,7 @@ final class ConfigTranslationJsonTest extends TestCase
     public function configTranslations(): array
     {
         return [
-            [
+            "one group, empty user and password" => [
                 '{
                     "directory": "migrations",
                     "groups": {
@@ -66,14 +66,14 @@ final class ConfigTranslationJsonTest extends TestCase
                     ]
                 )
             ],
-            [
+            "one group, filled user and password" => [
                 '{
                     "directory": "migrations",
                     "groups": {
                         "main": {
                             "connection": "connection",
-                            "user": "user",
-                            "password": "password"
+                            "user": "user1",
+                            "password": "password1"
                         }
                     }
                 }',
@@ -83,23 +83,23 @@ final class ConfigTranslationJsonTest extends TestCase
                     [
                         new Group(
                             'main',
-                            [new Database('connection', 'user', 'password')]
+                            [new Database('connection', 'user1', 'password1')]
                         ),
                     ]
                 )
             ],
-            [
+            "two groups, user and password per group" => [
                 '{
                     "directory": "migrations",
                     "groups": {
                         "main": {
                             "connection": "connection1",
-                            "user": "user",
-                            "password": "password"
+                            "user": "user1",
+                            "password": "password1"
                         },
                         "shards": {
-                            "user": "user",
-                            "password": "password",
+                            "user": "user2",
+                            "password": "password2",
                             "shard1": {
                                 "connection": "connection2/shard1"
                             },
@@ -122,22 +122,22 @@ final class ConfigTranslationJsonTest extends TestCase
                         new Group(
                             'main',
                             [
-                                new Database('connection1', 'user', 'password'),
+                                new Database('connection1', 'user1', 'password1'),
                             ]
                         ),
                         new Group(
                             'shards',
                             [
-                                new Database('connection2/shard1', 'user', 'password'),
-                                new Database('connection2/shard2', 'user', 'password'),
-                                new Database('connection3/shard3', 'user', 'password'),
-                                new Database('connection3/shard4', 'user', 'password'),
+                                new Database('connection2/shard1', 'user2', 'password2'),
+                                new Database('connection2/shard2', 'user2', 'password2'),
+                                new Database('connection3/shard3', 'user2', 'password2'),
+                                new Database('connection3/shard4', 'user2', 'password2'),
                             ]
                         ),
                     ]
                 )
             ],
-            [
+            "one group, connection per group, no users or passwords" => [
                 '{
                     "directory": "migrations",
                     "groups": {
