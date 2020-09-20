@@ -20,18 +20,14 @@ final class ConfigTranslationJson implements ConfigTranslation
             assert(is_string($name));
             assert(is_array($parsedGroup));
 
-            $connection = $parsedGroup['connection'] ?? '';
-            $user = $parsedGroup['user'] ?? '';
-            $password = $parsedGroup['password'] ?? '';
+            $connection = (string) ($parsedGroup['connection'] ?? '');
+            $user = (string) ($parsedGroup['user'] ?? '');
+            $password = (string) ($parsedGroup['password'] ?? '');
 
             $databases = [];
 
             if (!empty($connection)) {
-                $databases[] = new Database(
-                    (string) $connection,
-                    (string) $user,
-                    (string) $password
-                );
+                $databases[] = new Database($connection, $user, $password);
             }
 
             $fixedFields = array('connection', 'user', 'password');
@@ -47,17 +43,13 @@ final class ConfigTranslationJson implements ConfigTranslation
                 /** @var array $shard */
                 $shard = $parsedGroup[(string) $shard];
 
-                $databaseConnection = $shard['connection'] ?? $connection;
-                $databaseUser = $shard['user'] ?? $user;
-                $databasePassword = $shard['password'] ?? $password;
+                $databaseConnection = (string) ($shard['connection'] ?? $connection);
+                $databaseUser = (string) ($shard['user'] ?? $user);
+                $databasePassword = (string) ($shard['password'] ?? $password);
 
                 $this->assertNotEmpty($databaseConnection);
 
-                $databases[] = new Database(
-                    (string) $databaseConnection,
-                    (string) $databaseUser,
-                    (string) $databasePassword
-                );
+                $databases[] = new Database($databaseConnection, $databaseUser, $databasePassword);
             }
 
             if (empty($databases)) {
