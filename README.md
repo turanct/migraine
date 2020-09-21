@@ -41,29 +41,24 @@ In this example we have two **groups**, `main` which is the main database, and `
     "directory": "migrations",
     "groups": {
         "main": {
-            "host": "host1",
+            "connection": "mysql:host=127.0.0.1;port=3306;dbname=main",
             "user": "user",
-            "password": "password",
-            "database": "main"
+            "password": "password"
         },
         "shards": {
             "user": "user",
             "password": "password",
             "shard1": {
-                "host": "host2",
-                "database": "shard1"
+                "connection": "mysql:host=127.0.0.1;port=3306;dbname=shard1"
             },
             "shard2": {
-                "host": "host2",
-                "database": "shard2"
+                "connection": "mysql:host=127.0.0.1;port=3306;dbname=shard2"
             },
             "shard3": {
-                "host": "host3",
-                "database": "shard3"
+                "connection": "mysql:host=127.0.0.1;port=3306;dbname=shard3"
             },
             "shard4": {
-                "host": "host3",
-                "database": "shard4"
+                "connection": "mysql:host=127.0.0.1;port=3306;dbname=shard4"
             }
         }
     }
