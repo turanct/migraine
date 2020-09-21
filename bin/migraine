@@ -1,14 +1,23 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
-
 use Symfony\Component\Console\Application;
 use Turanct\Migraine\ClockNow;
 use Turanct\Migraine\CouldNotGenerateConfig;
 use Turanct\Migraine\FilesystemSymfony;
 use Turanct\Migraine\MigrateUp;
 use Turanct\Migraine\NewMigration;
+
+$ownAutoloader = __DIR__ . '/../vendor/autoload.php';
+$appAutoloader = __DIR__ . '/../../../autoload.php';
+
+if (file_exists($ownAutoloader)) {
+    require $ownAutoloader;
+} elseif (file_exists($appAutoloader)) {
+    require $appAutoloader;
+} else {
+    die("No autoloader found.\n");
+}
 
 $application = new Application();
 
