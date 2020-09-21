@@ -61,6 +61,18 @@ final class NewMigration
 
         $migrationPath = "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/{$group}/$name";
 
+        if (!is_dir("{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}")) {
+            $this->filesystem->mkdir(
+                "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}"
+            );
+        }
+
+        if (!is_dir("{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/{$group}")) {
+            $this->filesystem->mkdir(
+                "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/{$group}"
+            );
+        }
+
         $this->filesystem->touch($migrationPath);
 
         return $migrationPath;

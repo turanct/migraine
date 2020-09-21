@@ -26,4 +26,13 @@ final class FilesystemSymfony implements Filesystem
             // Do nothing for now
         }
     }
+
+    public function mkdir(string $path): void
+    {
+        try {
+            $this->filesystem->mkdir($path);
+        } catch (\Exception $e) {
+            // Do nothing for now
+        }
+    }
 }
