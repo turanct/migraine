@@ -31,7 +31,7 @@ final class LogsJson implements Logs
             $event = $event->toArray();
 
             if (
-                $event['event'] === EventMigrationWasExecuted::class
+                in_array($event['event'], [EventMigrationWasExecuted::class, EventMigrationWasSkipped::class])
                 && $event['connectionString'] === $connectionString
                 && $event['migration'] === $migration
             ) {
@@ -71,6 +71,9 @@ final class LogsJson implements Logs
                 try {
                     if ($event['event'] === EventMigrationWasExecuted::class) {
                         return EventMigrationWasExecuted::fromArray($event);
+                    }
+                    if ($event['event'] === EventMigrationWasSkipped::class) {
+                        return EventMigrationWasSkipped::fromArray($event);
                     }
                 } catch (\InvalidArgumentException $e) {
                     return null;

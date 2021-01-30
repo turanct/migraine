@@ -5,7 +5,7 @@ namespace Turanct\Migraine;
 final class CompletedMigrations
 {
     /**
-     * @var EventMigrationWasExecuted[]
+     * @var EventMigrationWasFinished[]
      */
     private $events = [];
 
@@ -14,7 +14,7 @@ final class CompletedMigrations
      */
     private $error = '';
 
-    public function completed(EventMigrationWasExecuted $event): void
+    public function completed(EventMigrationWasFinished $event): void
     {
         $this->events[] = $event;
     }
@@ -25,7 +25,7 @@ final class CompletedMigrations
     }
 
     /**
-     * @return EventMigrationWasExecuted[]
+     * @return EventMigrationWasFinished[]
      */
     public function getList(): array
     {

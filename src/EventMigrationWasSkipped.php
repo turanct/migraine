@@ -7,7 +7,7 @@ use DateTimeImmutable;
 /**
  * @psalm-immutable
  */
-final class EventMigrationWasExecuted implements EventMigrationWasFinished
+final class EventMigrationWasSkipped implements EventMigrationWasFinished
 {
     private $connectionString;
     private $migration;
@@ -46,7 +46,7 @@ final class EventMigrationWasExecuted implements EventMigrationWasFinished
     /**
      * @throws \InvalidArgumentException
      *
-     * @return EventMigrationWasExecuted
+     * @return EventMigrationWasSkipped
      */
     public static function fromArray(array $array): Event
     {

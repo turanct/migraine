@@ -6,6 +6,7 @@ use Turanct\Migraine\ClockNow;
 use Turanct\Migraine\CouldNotGenerateConfig;
 use Turanct\Migraine\FilesystemSymfony;
 use Turanct\Migraine\MigrateUp;
+use Turanct\Migraine\Skip;
 use Turanct\Migraine\NewMigration;
 
 $ownAutoloader = __DIR__ . '/../vendor/autoload.php';
@@ -42,9 +43,11 @@ $filesystem = new FilesystemSymfony($filesystemSymfony);
 $clock = new ClockNow();
 
 $migrateUp = new MigrateUp($config, $logs, $clock);
+$skip = new Skip($config, $logs, $clock);
 $newMigration = new NewMigration($config, $filesystem, $clock);
 
 $application->add(new \Turanct\Migraine\CommandMigrate($migrateUp));
+$application->add(new \Turanct\Migraine\CommandSkip($skip));
 $application->add(new \Turanct\Migraine\CommandNew($newMigration));
 $application->add(new \Turanct\Migraine\CommandSeed($migrateUp));
 

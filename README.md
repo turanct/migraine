@@ -147,6 +147,12 @@ If you want to only run a specific migration, specify it:
 vendor/bin/migraine migrate --migration 20200426195959000-create-data-table.sql --commit
 ```
 
+If you want to skip a migration (e.g. because you know it was already done manually):
+
+```sh
+vendor/bin/migraine skip --migration 20200426195959000-create-data-table.sql --commit
+```
+
 
 ### Seeding
 
