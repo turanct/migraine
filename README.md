@@ -153,6 +153,8 @@ If you want to skip a migration (e.g. because you know it was already done manua
 vendor/bin/migraine skip --migration 20200426195959000-create-data-table.sql --commit
 ```
 
+Use the skip functionality with caution. It writes a skipped log to the log file, and will never run this migration again, just like the migration was actually executed.
+
 
 ### Seeding
 
