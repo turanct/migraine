@@ -2,8 +2,6 @@
 
 namespace Turanct\Migraine;
 
-use DateTimeImmutable;
-
 final class NewMigration
 {
     /**
