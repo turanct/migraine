@@ -12,6 +12,7 @@
         <directory name="src" />
         <ignoreFiles>
             <file name="src/ClockFixed.php" />
+            <directory name="vendor/symfony/polyfill-mbstring" />
         </ignoreFiles>
     </projectFiles>
 </psalm>
