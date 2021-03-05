@@ -8,7 +8,7 @@ final class LogsJsonTest extends TestCase
 {
     private $file = '/tmp/migration-log.json';
 
-    public function setUp()
+    public function setUp(): void
     {
         if (is_file($this->file)) {
             unlink($this->file);
@@ -49,7 +49,7 @@ final class LogsJsonTest extends TestCase
         $this->assertEquals(false, $logs->migrationWasExecuted('anotherConnection', 'someMigration'));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         if (is_file($this->file)) {
             unlink($this->file);
