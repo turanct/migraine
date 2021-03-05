@@ -11,26 +11,34 @@ final class ConfigTranslationJson implements ConfigTranslation
             throw new CouldNotGenerateConfig();
         }
 
+        $fixedFields = array('connection', 'user', 'password');
+
         $migrationsDirectory = (string) $parsedJson['directory'] ?: 'migrations';
 
         $parsedGroups = (array) $parsedJson['groups'] ?: [];
 
+        $user = (string) ($parsedGroups['user'] ?? '');
+        $password = (string) ($parsedGroups['password'] ?? '');
+
         $groups = [];
+
+        foreach ($fixedFields as $fixedField) {
+            unset($parsedGroups[$fixedField]);
+        }
+
         foreach ($parsedGroups as $name => $parsedGroup) {
             assert(is_string($name));
             assert(is_array($parsedGroup));
 
-            $connection = (string) ($parsedGroup['connection'] ?? '');
-            $user = (string) ($parsedGroup['user'] ?? '');
-            $password = (string) ($parsedGroup['password'] ?? '');
+            $groupConnection = (string) ($parsedGroup['connection'] ?? '');
+            $groupUser = (string) ($parsedGroup['user'] ?? $user);
+            $groupPassword = (string) ($parsedGroup['password'] ?? $password);
 
             $databases = [];
 
-            if (!empty($connection)) {
-                $databases[] = new Database($connection, $user, $password);
+            if (!empty($groupConnection)) {
+                $databases[] = new Database($groupConnection, $groupUser, $groupPassword);
             }
-
-            $fixedFields = array('connection', 'user', 'password');
 
             $shards = array_filter(
                 array_keys($parsedGroup),
@@ -43,9 +51,9 @@ final class ConfigTranslationJson implements ConfigTranslation
                 /** @var array $shard */
                 $shard = $parsedGroup[(string) $shard];
 
-                $databaseConnection = (string) ($shard['connection'] ?? $connection);
-                $databaseUser = (string) ($shard['user'] ?? $user);
-                $databasePassword = (string) ($shard['password'] ?? $password);
+                $databaseConnection = (string) ($shard['connection'] ?? $groupConnection);
+                $databaseUser = (string) ($shard['user'] ?? $groupUser);
+                $databasePassword = (string) ($shard['password'] ?? $groupPassword);
 
                 $this->assertNotEmpty($databaseConnection);
 

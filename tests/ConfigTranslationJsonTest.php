@@ -137,6 +137,104 @@ final class ConfigTranslationJsonTest extends TestCase
                     ]
                 )
             ],
+            "two groups, user and password globally" => [
+                '{
+                    "directory": "migrations",
+                    "groups": {
+                        "user": "user1",
+                        "password": "password1",
+                        "main": {
+                            "connection": "connection1"
+                        },
+                        "shards": {
+                            "shard1": {
+                                "connection": "connection2/shard1"
+                            },
+                            "shard2": {
+                                "connection": "connection2/shard2"
+                            },
+                            "shard3": {
+                                "connection": "connection3/shard3"
+                            },
+                            "shard4": {
+                                "connection": "connection3/shard4"
+                            }
+                        }
+                    }
+                }',
+                new Config(
+                    __DIR__,
+                    'migrations',
+                    [
+                        new Group(
+                            'main',
+                            [
+                                new Database('connection1', 'user1', 'password1'),
+                            ]
+                        ),
+                        new Group(
+                            'shards',
+                            [
+                                new Database('connection2/shard1', 'user1', 'password1'),
+                                new Database('connection2/shard2', 'user1', 'password1'),
+                                new Database('connection3/shard3', 'user1', 'password1'),
+                                new Database('connection3/shard4', 'user1', 'password1'),
+                            ]
+                        ),
+                    ]
+                )
+            ],
+            "two groups, user and password globally but overwritten" => [
+                '{
+                    "directory": "migrations",
+                    "groups": {
+                        "user": "user1",
+                        "password": "password1",
+                        "main": {
+                            "user": "user2",
+                            "password": "password2",
+                            "connection": "connection1"
+                        },
+                        "shards": {
+                            "shard1": {
+                                "user": "user3",
+                                "password": "password3",
+                                "connection": "connection2/shard1"
+                            },
+                            "shard2": {
+                                "connection": "connection2/shard2"
+                            },
+                            "shard3": {
+                                "connection": "connection3/shard3"
+                            },
+                            "shard4": {
+                                "connection": "connection3/shard4"
+                            }
+                        }
+                    }
+                }',
+                new Config(
+                    __DIR__,
+                    'migrations',
+                    [
+                        new Group(
+                            'main',
+                            [
+                                new Database('connection1', 'user2', 'password2'),
+                            ]
+                        ),
+                        new Group(
+                            'shards',
+                            [
+                                new Database('connection2/shard1', 'user3', 'password3'),
+                                new Database('connection2/shard2', 'user1', 'password1'),
+                                new Database('connection3/shard3', 'user1', 'password1'),
+                                new Database('connection3/shard4', 'user1', 'password1'),
+                            ]
+                        ),
+                    ]
+                )
+            ],
             "one group, connection per group, no users or passwords" => [
                 '{
                     "directory": "migrations",
