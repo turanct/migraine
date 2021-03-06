@@ -6,11 +6,10 @@ use PHPUnit\Framework\TestCase;
 
 final class ConfigTranslationJsonTest extends TestCase
 {
-    /**
-     * @expectedException \Turanct\Migraine\CouldNotGenerateConfig
-     */
     public function testItFailsWhenNoCompleteConfigurationIsGiven()
     {
+        $this->expectException(CouldNotGenerateConfig::class);
+
         $workingDirectory = __DIR__;
 
         $json = '
@@ -18,7 +17,7 @@ final class ConfigTranslationJsonTest extends TestCase
                 "directory": "migrations",
                 "groups": {
                     "main": {
-                        "user": "user"
+                        "user": "user",
                         "password": "password"
                     }
                 }

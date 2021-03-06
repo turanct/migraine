@@ -188,11 +188,10 @@ final class MigrateUpTest extends TestCase
         $this->assertEquals(false, file_exists($this->dbFile()));
     }
 
-    /**
-     * @expectedException \Turanct\Migraine\MigrationsDirectoryNotFound
-     */
     public function test_it_fails_when_the_group_directory_does_not_exist()
     {
+        $this->expectException(MigrationsDirectoryNotFound::class);
+
         $this->clearDatabase();
 
         $config = new Config(

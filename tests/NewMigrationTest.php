@@ -6,11 +6,10 @@ use PHPUnit\Framework\TestCase;
 
 final class NewMigrationTest extends TestCase
 {
-    /**
-     * @expectedException \Turanct\Migraine\PleaseProvideValidGroupName
-     */
     public function test_it_errors_when_group_is_non_existing()
     {
+        $this->expectException(PleaseProvideValidGroupName::class);
+
         $group = 'testGroup';
 
         $config = $this->getConfig($group);
