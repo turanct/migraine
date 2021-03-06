@@ -1,6 +1,8 @@
 # 🤯 Migraine
 
 [![Build Status][ico-travis]][link-travis]
+[![PHPUnit tests](https://github.com/turanct/migraine/actions/workflows/tests.yaml/badge.svg)](https://github.com/turanct/migraine/actions/workflows/tests.yaml)
+[![Linters](https://github.com/turanct/migraine/actions/workflows/psalm.yaml/badge.svg)](https://github.com/turanct/migraine/actions/workflows/psalm.yaml)
 
 
 A simple way of providing database migrations to your project
