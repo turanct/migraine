@@ -68,6 +68,8 @@ final class CommandMigrate extends Command
 
     /**
      * @throws InvalidArgumentException
+     * @throws CouldNotGenerateConfig
+     * @throws MigrationsDirectoryNotFound
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -79,16 +81,10 @@ final class CommandMigrate extends Command
         $singleMigration = $input->getOption('migration');
         $singleMigration = is_string($singleMigration) ? $singleMigration : '';
 
-        try {
-            if (!empty($singleMigration)) {
-                $completedMigrations = $this->migrateUp->migrateSingle($commit, $singleMigration);
-            } else {
-                $completedMigrations = $this->migrateUp->migrateUp($commit, $group);
-            }
-        } catch (\Exception $e) {
-            $output->writeln(get_class($e) . ": {$e->getMessage()}");
-
-            return 1;
+        if (!empty($singleMigration)) {
+            $completedMigrations = $this->migrateUp->migrateSingle($commit, $singleMigration);
+        } else {
+            $completedMigrations = $this->migrateUp->migrateUp($commit, $group);
         }
 
         $listOfCompletedMigrations = $completedMigrations->getList();

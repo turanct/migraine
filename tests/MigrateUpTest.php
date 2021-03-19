@@ -16,12 +16,15 @@ final class MigrateUpTest extends TestCase
             [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
+        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
+        $getConfig->method('get')->willReturn($config);
+
         $logs = new LogsInMemory();
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
 
-        $migrateUp = new MigrateUp($config, $logs, $clock);
+        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
 
         $migrationName = 'single-migration.sql';
         $actualInfo = $migrateUp->migrateSingle(true, $migrationName);
@@ -53,12 +56,15 @@ final class MigrateUpTest extends TestCase
             [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
+        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
+        $getConfig->method('get')->willReturn($config);
+
         $logs = new LogsInMemory();
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
 
-        $migrateUp = new MigrateUp($config, $logs, $clock);
+        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
 
         $migrationName = 'single-migration.sql';
         $actualInfo = $migrateUp->migrateSingle(false, $migrationName);
@@ -87,12 +93,15 @@ final class MigrateUpTest extends TestCase
             [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
+        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
+        $getConfig->method('get')->willReturn($config);
+
         $logs = new LogsInMemory();
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
 
-        $migrateUp = new MigrateUp($config, $logs, $clock);
+        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
 
         $migrationName = 'faulty-migration.sql';
         $actualInfo = $migrateUp->migrateSingle(true, $migrationName);
@@ -113,12 +122,15 @@ final class MigrateUpTest extends TestCase
             [new Group('all-migrations-test', [new Database($this->connectionString(), '', '')])]
         );
 
+        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
+        $getConfig->method('get')->willReturn($config);
+
         $logs = new LogsInMemory();
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
 
-        $migrateUp = new MigrateUp($config, $logs, $clock);
+        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
 
         $actualInfo = $migrateUp->migrateUp(true, 'all-migrations-test');
 
@@ -158,12 +170,15 @@ final class MigrateUpTest extends TestCase
             [new Group('all-migrations-test', [new Database($this->connectionString(), '', '')])]
         );
 
+        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
+        $getConfig->method('get')->willReturn($config);
+
         $logs = new LogsInMemory();
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
 
-        $migrateUp = new MigrateUp($config, $logs, $clock);
+        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
 
         $actualInfo = $migrateUp->migrateUp(false, 'all-migrations-test');
 
@@ -200,12 +215,15 @@ final class MigrateUpTest extends TestCase
             [new Group('non-existing-group', [new Database($this->connectionString(), '', '')])]
         );
 
+        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
+        $getConfig->method('get')->willReturn($config);
+
         $logs = new LogsInMemory();
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
 
-        $migrateUp = new MigrateUp($config, $logs, $clock);
+        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
 
         $actualInfo = $migrateUp->migrateUp(true, 'non-existing-group');
     }

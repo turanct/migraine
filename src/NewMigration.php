@@ -5,7 +5,7 @@ namespace Turanct\Migraine;
 final class NewMigration
 {
     /**
-     * @var Config
+     * @var GetConfig
      */
     private $config;
 
@@ -19,7 +19,7 @@ final class NewMigration
      */
     private $clock;
 
-    public function __construct(Config $config, Filesystem $filesystem, Clock $clock)
+    public function __construct(GetConfig $config, Filesystem $filesystem, Clock $clock)
     {
         $this->config = $config;
         $this->filesystem = $filesystem;
@@ -30,15 +30,18 @@ final class NewMigration
      * @param string $group
      * @param string $suffix
      *
+     * @throws CouldNotGenerateConfig
      * @throws PleaseProvideValidGroupName
      *
      * @return string
      */
     public function create(string $group, string $suffix): string
     {
+        $config = $this->config->get();
+
         $suffix = preg_replace('/[^a-zA-Z0-9]/i', '-', $suffix);
 
-        $groups = $this->config->getGroups();
+        $groups = $config->getGroups();
 
         $groupNames = array_map(
             function (Group $group): string {
@@ -57,17 +60,17 @@ final class NewMigration
         $name = empty($suffix) ? $name : "{$name}-{$suffix}";
         $name .= '.sql';
 
-        $migrationPath = "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/{$group}/$name";
+        $migrationPath = "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group}/$name";
 
-        if (!is_dir("{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}")) {
+        if (!is_dir("{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}")) {
             $this->filesystem->mkdir(
-                "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}"
+                "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}"
             );
         }
 
-        if (!is_dir("{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/{$group}")) {
+        if (!is_dir("{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group}")) {
             $this->filesystem->mkdir(
-                "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/{$group}"
+                "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group}"
             );
         }
 

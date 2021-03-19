@@ -58,6 +58,7 @@ final class CommandNew extends Command
 
     /**
      * @throws InvalidArgumentException
+     * @throws CouldNotGenerateConfig
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

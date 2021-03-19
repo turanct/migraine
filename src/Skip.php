@@ -8,7 +8,7 @@ use PDOException;
 final class Skip
 {
     /**
-     * @var Config
+     * @var GetConfig
      */
     private $config;
 
@@ -22,7 +22,7 @@ final class Skip
      */
     private $clock;
 
-    public function __construct(Config $config, Logs $logs, Clock $clock)
+    public function __construct(GetConfig $config, Logs $logs, Clock $clock)
     {
         $this->config = $config;
         $this->logs = $logs;
@@ -33,10 +33,14 @@ final class Skip
      * @param bool $commit
      * @param string $migrationName
      *
+     * @throws CouldNotGenerateConfig
+     *
      * @return CompletedMigrations
      */
     public function skipSingle(bool $commit, string $migrationName): CompletedMigrations
     {
+        $config = $this->config->get();
+
         $completedMigrations = new CompletedMigrations();
 
         if (empty($migrationName)) {
@@ -45,10 +49,10 @@ final class Skip
             return $completedMigrations;
         }
 
-        $groups = $this->config->getGroups();
+        $groups = $config->getGroups();
 
         foreach ($groups as $group) {
-            $migrationPath = "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/";
+            $migrationPath = "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/";
             $migrationPath.= "{$group->getName()}/{$migrationName}";
 
             $file = new \SplFileInfo($migrationPath);

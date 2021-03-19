@@ -16,12 +16,15 @@ final class SkipTest extends TestCase
             [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
+        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
+        $getConfig->method('get')->willReturn($config);
+
         $logs = new LogsInMemory();
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
 
-        $skip = new Skip($config, $logs, $clock);
+        $skip = new Skip($getConfig, $logs, $clock);
 
         $migrationName = 'single-migration.sql';
         $actualInfo = $skip->skipSingle(true, $migrationName);
@@ -53,12 +56,15 @@ final class SkipTest extends TestCase
             [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
+        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
+        $getConfig->method('get')->willReturn($config);
+
         $logs = new LogsInMemory();
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
 
-        $skip = new Skip($config, $logs, $clock);
+        $skip = new Skip($getConfig, $logs, $clock);
 
         $migrationName = 'single-migration.sql';
         $actualInfo = $skip->skipSingle(false, $migrationName);

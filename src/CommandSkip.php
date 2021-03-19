@@ -59,6 +59,7 @@ final class CommandSkip extends Command
 
     /**
      * @throws InvalidArgumentException
+     * @throws CouldNotGenerateConfig
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -67,16 +68,10 @@ final class CommandSkip extends Command
         $migration = $input->getOption('migration');
         $migration = is_string($migration) ? $migration : '';
 
-        try {
-            if (!empty($migration)) {
-                $completedMigrations = $this->skip->skipSingle($commit, $migration);
-            } else {
-                $output->writeln("Please provide a migration to skip.");
-
-                return 1;
-            }
-        } catch (\Exception $e) {
-            $output->writeln(get_class($e) . ": {$e->getMessage()}");
+        if (!empty($migration)) {
+            $completedMigrations = $this->skip->skipSingle($commit, $migration);
+        } else {
+            $output->writeln("Please provide a migration to skip.");
 
             return 1;
         }

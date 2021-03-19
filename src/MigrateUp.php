@@ -8,7 +8,7 @@ use PDOException;
 final class MigrateUp
 {
     /**
-     * @var Config
+     * @var GetConfig
      */
     private $config;
 
@@ -22,7 +22,7 @@ final class MigrateUp
      */
     private $clock;
 
-    public function __construct(Config $config, Logs $logs, Clock $clock)
+    public function __construct(GetConfig $config, Logs $logs, Clock $clock)
     {
         $this->config = $config;
         $this->logs = $logs;
@@ -33,15 +33,18 @@ final class MigrateUp
      * @param bool $commit
      * @param string $onlyMigrateThisGroup
      *
+     * @throws CouldNotGenerateConfig
      * @throws MigrationsDirectoryNotFound
      *
      * @return CompletedMigrations
      */
     public function migrateUp(bool $commit = false, string $onlyMigrateThisGroup = ''): CompletedMigrations
     {
+        $config = $this->config->get();
+
         $completedMigrations = new CompletedMigrations();
 
-        $groups = $this->config->getGroups();
+        $groups = $config->getGroups();
 
         foreach ($groups as $group) {
             if (!empty($onlyMigrateThisGroup) && $onlyMigrateThisGroup !== $group->getName()) {
@@ -53,7 +56,7 @@ final class MigrateUp
                 /** @psalm-suppress TooManyArguments */
                 $files = $finder
                     ->files()
-                    ->in("{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/{$group->getName()}")
+                    ->in("{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group->getName()}")
                     ->name('*.sql')
                     ->depth('==0')
                     ->sortByName(true);
@@ -125,10 +128,14 @@ final class MigrateUp
      * @param bool $commit
      * @param string $migrationName
      *
+     * @throws CouldNotGenerateConfig
+     *
      * @return CompletedMigrations
      */
     public function migrateSingle(bool $commit, string $migrationName): CompletedMigrations
     {
+        $config = $this->config->get();
+
         $completedMigrations = new CompletedMigrations();
 
         if (empty($migrationName)) {
@@ -137,10 +144,10 @@ final class MigrateUp
             return $completedMigrations;
         }
 
-        $groups = $this->config->getGroups();
+        $groups = $config->getGroups();
 
         foreach ($groups as $group) {
-            $migrationPath = "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/";
+            $migrationPath = "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/";
             $migrationPath.= "{$group->getName()}/{$migrationName}";
 
             $file = new \SplFileInfo($migrationPath);
@@ -209,10 +216,14 @@ final class MigrateUp
      * @param bool $commit
      * @param string $seedName
      *
+     * @throws CouldNotGenerateConfig
+     *
      * @return CompletedMigrations
      */
     public function seed(bool $commit, string $seedName): CompletedMigrations
     {
+        $config = $this->config->get();
+
         $completedMigrations = new CompletedMigrations();
 
         if (empty($seedName)) {
@@ -221,10 +232,10 @@ final class MigrateUp
             return $completedMigrations;
         }
 
-        $groups = $this->config->getGroups();
+        $groups = $config->getGroups();
 
         foreach ($groups as $group) {
-            $migrationPath = "{$this->config->getWorkingDirectory()}/{$this->config->getMigrationsDirectory()}/";
+            $migrationPath = "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/";
             $migrationPath.= "{$group->getName()}/{$seedName}";
 
             $file = new \SplFileInfo($migrationPath);

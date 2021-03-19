@@ -25,15 +25,7 @@ $application = new Application();
 $currentWorkingDirectory = getcwd();
 
 $translation = new \Turanct\Migraine\ConfigTranslationJson();
-
-$configFile = "{$currentWorkingDirectory}/migrations.json";
-if (!is_file($configFile)) {
-    throw new CouldNotGenerateConfig();
-}
-
-$filecontents = file_get_contents($configFile);
-
-$config = $translation->translate($currentWorkingDirectory, $filecontents);
+$configFromFile = new \Turanct\Migraine\GetConfigFromFile($translation, $currentWorkingDirectory, 'migrations.json');
 
 $logs = new \Turanct\Migraine\LogsJson($currentWorkingDirectory . '/logs.json');
 
@@ -42,9 +34,9 @@ $filesystem = new FilesystemSymfony($filesystemSymfony);
 
 $clock = new ClockNow();
 
-$migrateUp = new MigrateUp($config, $logs, $clock);
-$skip = new Skip($config, $logs, $clock);
-$newMigration = new NewMigration($config, $filesystem, $clock);
+$migrateUp = new MigrateUp($configFromFile, $logs, $clock);
+$skip = new Skip($configFromFile, $logs, $clock);
+$newMigration = new NewMigration($configFromFile, $filesystem, $clock);
 
 $application->add(new \Turanct\Migraine\CommandMigrate($migrateUp));
 $application->add(new \Turanct\Migraine\CommandSkip($skip));

@@ -59,6 +59,7 @@ final class CommandSeed extends Command
 
     /**
      * @throws InvalidArgumentException
+     * @throws CouldNotGenerateConfig
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -67,13 +68,7 @@ final class CommandSeed extends Command
 
         $commit = (bool) $input->getOption('commit');
 
-        try {
-            $completedMigrations = $this->migrateUp->seed($commit, $seed);
-        } catch (\Exception $e) {
-            $output->writeln(get_class($e) . ": {$e->getMessage()}");
-
-            return 1;
-        }
+        $completedMigrations = $this->migrateUp->seed($commit, $seed);
 
         $listOfCompletedMigrations = $completedMigrations->getList();
         foreach ($listOfCompletedMigrations as $completedMigration) {

@@ -36,7 +36,7 @@ final class NewMigrationTest extends TestCase
         $clock = $this->getMockBuilder(Clock::class)->getMock();
         $clock->method('getTime')->willReturn($time);
 
-        $filename = "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group}/{$time->format('YmdHisv')}.sql";
+        $filename = "{$config->get()->getWorkingDirectory()}/{$config->get()->getMigrationsDirectory()}/{$group}/{$time->format('YmdHisv')}.sql";
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
         $filesystem
             ->expects($this->once())
@@ -58,7 +58,7 @@ final class NewMigrationTest extends TestCase
         $clock = $this->getMockBuilder(Clock::class)->getMock();
         $clock->method('getTime')->willReturn($time);
 
-        $filename = "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group}/{$time->format('YmdHisv')}-{$suffix}.sql";
+        $filename = "{$config->get()->getWorkingDirectory()}/{$config->get()->getMigrationsDirectory()}/{$group}/{$time->format('YmdHisv')}-{$suffix}.sql";
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
         $filesystem
             ->expects($this->once())
@@ -72,9 +72,9 @@ final class NewMigrationTest extends TestCase
     /**
      * @param string $group
      *
-     * @return Config
+     * @return GetConfig
      */
-    private function getConfig(string $group): Config
+    private function getConfig(string $group): GetConfig
     {
         $config = new Config(
             __DIR__,
@@ -82,6 +82,9 @@ final class NewMigrationTest extends TestCase
             [new Group($group, [new Database('connection', 'user', 'pass')])]
         );
 
-        return $config;
+        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
+        $getConfig->method('get')->willReturn($config);
+
+        return $getConfig;
     }
 }
