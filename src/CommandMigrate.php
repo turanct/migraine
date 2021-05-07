@@ -64,6 +64,15 @@ final class CommandMigrate extends Command
                 'Actually run the migrations instead of doing a dry-run.',
                 null
             );
+
+        $this
+            ->addOption(
+                'silent',
+                null,
+                InputOption::VALUE_NONE,
+                'Do not output anything if there are no migrations being run.',
+                null
+            );
     }
 
     /**
@@ -76,6 +85,7 @@ final class CommandMigrate extends Command
         $exitCode = 0;
 
         $commit = (bool) $input->getOption('commit');
+        $silent = (bool) $input->getOption('silent');
 
         $group = $input->getOption('group');
         $group = is_string($group) ? $group : '';
@@ -101,7 +111,7 @@ final class CommandMigrate extends Command
             $exitCode = 1;
         }
 
-        if ($commit !== true) {
+        if ($commit !== true && $silent !== true) {
             $line = 'The above is the result of a dry-run. If you want to execute this, add --commit to the command.';
             $output->writeln($line);
         }
