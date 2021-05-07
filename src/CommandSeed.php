@@ -63,6 +63,8 @@ final class CommandSeed extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $exitCode = 0;
+
         $seed = $input->getOption('seed');
         $seed = is_string($seed) ? $seed : '';
 
@@ -78,6 +80,8 @@ final class CommandSeed extends Command
 
         if ($completedMigrations->failed()) {
             $output->writeln($completedMigrations->getError());
+
+            $exitCode = 1;
         }
 
         if ($commit !== true) {
@@ -85,6 +89,6 @@ final class CommandSeed extends Command
             $output->writeln($line);
         }
 
-        return 0;
+        return $exitCode;
     }
 }

@@ -63,6 +63,8 @@ final class CommandSkip extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $exitCode = 0;
+
         $commit = (bool) $input->getOption('commit');
 
         $migration = $input->getOption('migration');
@@ -84,6 +86,8 @@ final class CommandSkip extends Command
 
         if ($completedMigrations->failed()) {
             $output->writeln($completedMigrations->getError());
+
+            $exitCode = 1;
         }
 
         if ($commit !== true) {
@@ -91,6 +95,6 @@ final class CommandSkip extends Command
             $output->writeln($line);
         }
 
-        return 0;
+        return $exitCode;
     }
 }

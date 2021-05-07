@@ -73,6 +73,8 @@ final class CommandMigrate extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $exitCode = 0;
+
         $commit = (bool) $input->getOption('commit');
 
         $group = $input->getOption('group');
@@ -95,6 +97,8 @@ final class CommandMigrate extends Command
 
         if ($completedMigrations->failed()) {
             $output->writeln($completedMigrations->getError());
+
+            $exitCode = 1;
         }
 
         if ($commit !== true) {
@@ -102,6 +106,6 @@ final class CommandMigrate extends Command
             $output->writeln($line);
         }
 
-        return 0;
+        return $exitCode;
     }
 }
