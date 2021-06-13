@@ -77,6 +77,7 @@ final class CommandNew extends Command
         }
 
         $output->writeln("Created new migration {$migrationPath}");
+        $output->writeln("Don't forget to update relevant seeds if needed.");
 
         return 0;
     }
