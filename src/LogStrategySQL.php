@@ -2,6 +2,9 @@
 
 namespace Turanct\Migraine;
 
+/**
+ * @psalm-immutable
+ */
 final class LogStrategySQL implements LogStrategy
 {
     private $connectionString;
