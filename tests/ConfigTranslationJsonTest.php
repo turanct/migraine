@@ -305,6 +305,68 @@ final class ConfigTranslationJsonTest extends TestCase
                     ]
                 )
             ],
+            "logging in database, connection only" => [
+                '{
+                    "directory": "migrations",
+                    "logs": {
+                        "type": "sql",
+                        "connection": "connection1",
+                        "table": "migraine"
+                    },
+                    "groups": {
+                        "main": {
+                            "connection": "connection1",
+                            "user": "user1",
+                            "password": "password1"
+                        }
+                    }
+                }',
+                new Config(
+                    __DIR__,
+                    'migrations',
+                    new LogStrategySQL('connection1', '', '', 'migraine'),
+                    [
+                        new Group(
+                            'main',
+                            [
+                                new Database('connection1', 'user1', 'password1'),
+                            ]
+                        ),
+                    ]
+                )
+            ],
+            "logging in database, with user and password" => [
+                '{
+                    "directory": "migrations",
+                    "logs": {
+                        "type": "sql",
+                        "connection": "connection1",
+                        "table": "migraine",
+                        "user": "user1",
+                        "password": "password1"
+                    },
+                    "groups": {
+                        "main": {
+                            "connection": "connection1",
+                            "user": "user1",
+                            "password": "password1"
+                        }
+                    }
+                }',
+                new Config(
+                    __DIR__,
+                    'migrations',
+                    new LogStrategySQL('connection1', 'user1', 'password1', 'migraine'),
+                    [
+                        new Group(
+                            'main',
+                            [
+                                new Database('connection1', 'user1', 'password1'),
+                            ]
+                        ),
+                    ]
+                )
+            ],
         ];
     }
 }

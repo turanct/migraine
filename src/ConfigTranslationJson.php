@@ -98,6 +98,15 @@ final class ConfigTranslationJson implements ConfigTranslation
             return new LogStrategyJson("{$workingDirectory}/{$parsedJson['logs']['file']}");
         }
 
+        if ($parsedJson['logs']['type'] === 'sql') {
+            $connection = (string) ($parsedJson['logs']['connection'] ?? '');
+            $table = (string) ($parsedJson['logs']['table'] ?? '');
+            $user = (string) ($parsedJson['logs']['user'] ?? '');
+            $password = (string) ($parsedJson['logs']['password'] ?? '');
+
+            return new LogStrategySQL($connection, $user, $password, $table);
+        }
+
         return $logs;
     }
 }

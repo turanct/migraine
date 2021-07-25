@@ -20,6 +20,7 @@ Use this package at your own risk.
 - [x] Run migrations on multiple databases 
 - [x] Run different migrations on different groups of databases
 - [x] Allow seeding of the databases
+- [x] Keep logs in SQL itself
 - [ ] Have the ability to roll back migrations
 
 
@@ -63,6 +64,45 @@ In this example we have two **groups**, `main` which is the main database, and `
                 "connection": "mysql:host=127.0.0.1;port=3306;dbname=shard4"
             }
         }
+    }
+}
+```
+
+By default, migraine will log the migrations that are done in `logs.json` in your working directory, however this is configurable:
+
+#### Logging in a different file
+
+`migrations.json`
+
+```json
+{
+    "directory": "migrations",
+    "logs": {
+        "type": "json",
+        "file": "alternative-file.json"
+    },
+    "groups": {
+        ...
+    }
+}
+```
+
+#### Logging in SQL
+
+`migrations.json`
+
+```json
+{
+    "directory": "migrations",
+    "logs": {
+        "type": "sql",
+        "connection": "mysql:host=127.0.0.1;port=3306;dbname=main",
+        "user": "user",
+        "password": "password",
+        "table": "logs"
+    },
+    "groups": {
+        ...
     }
 }
 ```

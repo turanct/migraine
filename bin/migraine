@@ -30,6 +30,7 @@ $configFromFile = new \Turanct\Migraine\GetConfigFromFile($translation, $current
 $logs = new \Turanct\Migraine\LogsDispatch(
     [
         new \Turanct\Migraine\LogsJson(),
+        new \Turanct\Migraine\LogsSQL(),
     ]
 );
 
