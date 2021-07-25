@@ -15,6 +15,8 @@ final class ConfigTranslationJson implements ConfigTranslation
 
         $migrationsDirectory = (string) $parsedJson['directory'] ?: 'migrations';
 
+        $logStrategy = $this->determineLogStrategy($workingDirectory, $parsedJson);
+
         $parsedGroups = (array) $parsedJson['groups'] ?: [];
 
         $user = (string) ($parsedGroups['user'] ?? '');
@@ -67,7 +69,7 @@ final class ConfigTranslationJson implements ConfigTranslation
             $groups[] = new Group((string) $name, $databases);
         }
 
-        return new Config($workingDirectory, $migrationsDirectory, $groups);
+        return new Config($workingDirectory, $migrationsDirectory, $logStrategy, $groups);
     }
 
     /**
@@ -78,5 +80,24 @@ final class ConfigTranslationJson implements ConfigTranslation
         if (empty($value)) {
             throw new CouldNotGenerateConfig();
         }
+    }
+
+    protected function determineLogStrategy(string $workingDirectory, array $parsedJson): LogStrategy
+    {
+        $logs = new LogStrategyJson("{$workingDirectory}/logs.json");
+
+        if (!isset($parsedJson['logs']) || !isset($parsedJson['logs']['type'])) {
+            return $logs;
+        }
+
+        if (
+            $parsedJson['logs']['type'] === 'file'
+            && isset($parsedJson['logs']['file'])
+            && is_string($parsedJson['logs']['file'])
+        ) {
+            return new LogStrategyJson("{$workingDirectory}/{$parsedJson['logs']['file']}");
+        }
+
+        return $logs;
     }
 }

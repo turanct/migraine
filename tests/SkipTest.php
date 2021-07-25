@@ -13,6 +13,7 @@ final class SkipTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
+            new LogStrategyJson('logs.json'),
             [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
@@ -53,6 +54,7 @@ final class SkipTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
+            new LogStrategyJson('logs.json'),
             [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 

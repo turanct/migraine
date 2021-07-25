@@ -12,12 +12,17 @@ final class LogsInMemory implements Logs
      */
     private $events = [];
 
-    public function append(Event $event): void
+    public function acceptsStrategy(LogStrategy $strategy): bool
+    {
+        return $strategy instanceof LogStrategyInMemory;
+    }
+
+    public function append(LogStrategy $strategy, Event $event): void
     {
         $this->events[] = $event;
     }
 
-    public function migrationWasExecuted(string $connectionString, string $migration): bool
+    public function migrationWasExecuted(LogStrategy $strategy, string $connectionString, string $migration): bool
     {
         foreach ($this->events as $event) {
             $event = $event->toArray();
@@ -34,7 +39,7 @@ final class LogsInMemory implements Logs
         return false;
     }
 
-    public function getAll(): array
+    public function getAll(LogStrategy $strategy): array
     {
         return $this->events;
     }

@@ -17,7 +17,8 @@ final class LogsJsonTest extends TestCase
 
     public function testAppendedEventsGetReturnedInOrder()
     {
-        $logs = new LogsJson($this->file);
+        $strategy = new LogStrategyJson($this->file);
+        $logs = new LogsJson();
 
         $expected = [
             new EventMigrationWasExecuted('connection', 'migration', new \DateTimeImmutable('2020-05-01 23:59:59')),
@@ -27,15 +28,16 @@ final class LogsJsonTest extends TestCase
         ];
 
         foreach ($expected as $event) {
-            $logs->append($event);
+            $logs->append($strategy, $event);
         }
 
-        $this->assertEquals($expected, $logs->getAll());
+        $this->assertEquals($expected, $logs->getAll($strategy));
     }
 
     public function testExecutedMigrationsAreRecognisedAsSuch()
     {
-        $logs = new LogsJson($this->file);
+        $strategy = new LogStrategyJson($this->file);
+        $logs = new LogsJson();
 
         $migration = new EventMigrationWasExecuted(
             'connection',
@@ -43,10 +45,10 @@ final class LogsJsonTest extends TestCase
             new \DateTimeImmutable('2020-05-01 23:59:59')
         );
 
-        $logs->append($migration);
+        $logs->append($strategy, $migration);
 
-        $this->assertEquals(true, $logs->migrationWasExecuted('connection', 'migration'));
-        $this->assertEquals(false, $logs->migrationWasExecuted('anotherConnection', 'someMigration'));
+        $this->assertEquals(true, $logs->migrationWasExecuted($strategy, 'connection', 'migration'));
+        $this->assertEquals(false, $logs->migrationWasExecuted($strategy, 'anotherConnection', 'someMigration'));
     }
 
     public function tearDown(): void

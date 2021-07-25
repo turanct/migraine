@@ -79,6 +79,7 @@ final class NewMigrationTest extends TestCase
         $config = new Config(
             __DIR__,
             'migrations',
+            new LogStrategyJson('logs.json'),
             [new Group($group, [new Database('connection', 'user', 'pass')])]
         );
 

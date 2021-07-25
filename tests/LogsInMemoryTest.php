@@ -8,6 +8,7 @@ final class LogsInMemoryTest extends TestCase
 {
     public function testAppendedEventsGetReturnedInOrder(): void
     {
+        $strategy = new LogStrategyInMemory();
         $logs = new LogsInMemory();
 
         $expected = [
@@ -18,14 +19,15 @@ final class LogsInMemoryTest extends TestCase
         ];
 
         foreach ($expected as $event) {
-            $logs->append($event);
+            $logs->append($strategy, $event);
         }
 
-        $this->assertEquals($expected, $logs->getAll());
+        $this->assertEquals($expected, $logs->getAll($strategy));
     }
 
     public function testExecutedMigrationsAreRecognisedAsSuch()
     {
+        $strategy = new LogStrategyInMemory();
         $logs = new LogsInMemory();
 
         $migration = new EventMigrationWasExecuted(
@@ -34,9 +36,9 @@ final class LogsInMemoryTest extends TestCase
             new \DateTimeImmutable('2020-05-01 23:59:59')
         );
 
-        $logs->append($migration);
+        $logs->append($strategy, $migration);
 
-        $this->assertEquals(true, $logs->migrationWasExecuted('connection', 'migration'));
-        $this->assertEquals(false, $logs->migrationWasExecuted('anotherConnection', 'someMigration'));
+        $this->assertEquals(true, $logs->migrationWasExecuted($strategy, 'connection', 'migration'));
+        $this->assertEquals(false, $logs->migrationWasExecuted($strategy, 'anotherConnection', 'someMigration'));
     }
 }

@@ -27,7 +27,11 @@ $currentWorkingDirectory = getcwd();
 $translation = new \Turanct\Migraine\ConfigTranslationJson();
 $configFromFile = new \Turanct\Migraine\GetConfigFromFile($translation, $currentWorkingDirectory, 'migrations.json');
 
-$logs = new \Turanct\Migraine\LogsJson($currentWorkingDirectory . '/logs.json');
+$logs = new \Turanct\Migraine\LogsDispatch(
+    [
+        new \Turanct\Migraine\LogsJson(),
+    ]
+);
 
 $filesystemSymfony = new Symfony\Component\Filesystem\Filesystem();
 $filesystem = new FilesystemSymfony($filesystemSymfony);

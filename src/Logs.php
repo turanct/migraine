@@ -4,14 +4,16 @@ namespace Turanct\Migraine;
 
 interface Logs
 {
-    public function append(Event $event): void;
+    public function acceptsStrategy(LogStrategy $strategy): bool;
 
-    public function migrationWasExecuted(string $connectionString, string $migration): bool;
+    public function append(LogStrategy $strategy, Event $event): void;
+
+    public function migrationWasExecuted(LogStrategy $strategy, string $connectionString, string $migration): bool;
 
     /**
      * @psalm-suppress PossiblyUnusedMethod
      *
      * @return Event[]
      */
-    public function getAll(): array;
+    public function getAll(LogStrategy $strategy): array;
 }

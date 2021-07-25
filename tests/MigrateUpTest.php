@@ -13,6 +13,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
+            new LogStrategyJson('logs.json'),
             [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
@@ -53,6 +54,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
+            new LogStrategyJson('logs.json'),
             [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
@@ -90,6 +92,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
+            new LogStrategyJson('logs.json'),
             [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
         );
 
@@ -119,6 +122,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
+            new LogStrategyJson('logs.json'),
             [new Group('all-migrations-test', [new Database($this->connectionString(), '', '')])]
         );
 
@@ -167,6 +171,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures',
+            new LogStrategyJson('logs.json'),
             [new Group('all-migrations-test', [new Database($this->connectionString(), '', '')])]
         );
 
@@ -212,6 +217,7 @@ final class MigrateUpTest extends TestCase
         $config = new Config(
             __DIR__,
             'fixtures-that-dont-exist',
+            new LogStrategyJson('logs.json'),
             [new Group('non-existing-group', [new Database($this->connectionString(), '', '')])]
         );
 

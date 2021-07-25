@@ -4,28 +4,31 @@ namespace Turanct\Migraine;
 
 final class LogsJson implements Logs
 {
-    /**
-     * @var string
-     */
-    private $file;
-
-    public function __construct(string $file)
+    public function acceptsStrategy(LogStrategy $strategy): bool
     {
-        $this->file = $file;
+        return $strategy instanceof LogStrategyJson;
     }
 
-    public function append(Event $event): void
+    public function append(LogStrategy $strategy, Event $event): void
     {
-        $events = $this->readFromFile();
+        if (!$strategy instanceof LogStrategyJson) {
+            return;
+        }
+
+        $events = $this->readFromFile($strategy->getFile());
 
         $events[] = $event;
 
-        $this->writeToFile($events);
+        $this->writeToFile($strategy->getFile(), $events);
     }
 
-    public function migrationWasExecuted(string $connectionString, string $migration): bool
+    public function migrationWasExecuted(LogStrategy $strategy, string $connectionString, string $migration): bool
     {
-        $events = $this->readFromFile();
+        if (!$strategy instanceof LogStrategyJson) {
+            return false;
+        }
+
+        $events = $this->readFromFile($strategy->getFile());
 
         foreach ($events as $event) {
             $event = $event->toArray();
@@ -42,20 +45,26 @@ final class LogsJson implements Logs
         return false;
     }
 
-    public function getAll(): array
+    public function getAll(LogStrategy $strategy): array
     {
-        return $this->readFromFile();
+        if (!$strategy instanceof LogStrategyJson) {
+            return [];
+        }
+
+        return $this->readFromFile($strategy->getFile());
     }
 
     /**
+     * @param string $file
+     *
      * @return Event[]
      */
-    private function readFromFile(): array
+    private function readFromFile(string $file): array
     {
         $contents = '[]';
 
-        if (is_file($this->file)) {
-            $contents = file_get_contents($this->file);
+        if (is_file($file)) {
+            $contents = file_get_contents($file);
 
             if ($contents === false) {
                 $contents = '[]';
@@ -90,9 +99,10 @@ final class LogsJson implements Logs
     }
 
     /**
+     * @param string $file
      * @param Event[] $events
      */
-    private function writeToFile($events): void
+    private function writeToFile(string $file, array $events): void
     {
         $events = array_map(
             function (Event $event) {
@@ -101,6 +111,6 @@ final class LogsJson implements Logs
             $events
         );
 
-        file_put_contents($this->file, json_encode($events, JSON_PRETTY_PRINT));
+        file_put_contents($file, json_encode($events, JSON_PRETTY_PRINT));
     }
 }

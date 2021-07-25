@@ -41,6 +41,7 @@ final class MigrateUp
     public function migrateUp(bool $commit = false, string $onlyMigrateThisGroup = ''): CompletedMigrations
     {
         $config = $this->config->get();
+        $logStrategy = $config->getLogStrategy();
 
         $completedMigrations = new CompletedMigrations();
 
@@ -71,7 +72,7 @@ final class MigrateUp
                 $databases = $group->getDatabases();
 
                 foreach ($databases as $database) {
-                    if ($this->logs->migrationWasExecuted($database->getConnectionString(), $file->getFilename())) {
+                    if ($this->logs->migrationWasExecuted($logStrategy, $database->getConnectionString(), $file->getFilename())) {
                         continue;
                     }
 
@@ -104,7 +105,7 @@ final class MigrateUp
                         );
 
                         if ($commit === true) {
-                            $this->logs->append($migrationWasExecuted);
+                            $this->logs->append($logStrategy, $migrationWasExecuted);
                         }
 
                         $completedMigrations->completed($migrationWasExecuted);
@@ -135,6 +136,7 @@ final class MigrateUp
     public function migrateSingle(bool $commit, string $migrationName): CompletedMigrations
     {
         $config = $this->config->get();
+        $logStrategy = $config->getLogStrategy();
 
         $completedMigrations = new CompletedMigrations();
 
@@ -160,7 +162,7 @@ final class MigrateUp
             $databases = $group->getDatabases();
 
             foreach ($databases as $database) {
-                if ($this->logs->migrationWasExecuted($database->getConnectionString(), $file->getFilename())) {
+                if ($this->logs->migrationWasExecuted($logStrategy, $database->getConnectionString(), $file->getFilename())) {
                     continue;
                 }
 
@@ -193,7 +195,7 @@ final class MigrateUp
                     );
 
                     if ($commit === true) {
-                        $this->logs->append($migrationWasExecuted);
+                        $this->logs->append($logStrategy, $migrationWasExecuted);
                     }
 
                     $completedMigrations->completed($migrationWasExecuted);

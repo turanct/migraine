@@ -57,6 +57,7 @@ final class ConfigTranslationJsonTest extends TestCase
                 new Config(
                     __DIR__,
                     'migrations',
+                    new LogStrategyJson(__DIR__ . '/logs.json'),
                     [
                         new Group(
                             'main',
@@ -79,6 +80,7 @@ final class ConfigTranslationJsonTest extends TestCase
                 new Config(
                     __DIR__,
                     'migrations',
+                    new LogStrategyJson(__DIR__ . '/logs.json'),
                     [
                         new Group(
                             'main',
@@ -117,6 +119,7 @@ final class ConfigTranslationJsonTest extends TestCase
                 new Config(
                     __DIR__,
                     'migrations',
+                    new LogStrategyJson(__DIR__ . '/logs.json'),
                     [
                         new Group(
                             'main',
@@ -164,6 +167,7 @@ final class ConfigTranslationJsonTest extends TestCase
                 new Config(
                     __DIR__,
                     'migrations',
+                    new LogStrategyJson(__DIR__ . '/logs.json'),
                     [
                         new Group(
                             'main',
@@ -215,6 +219,7 @@ final class ConfigTranslationJsonTest extends TestCase
                 new Config(
                     __DIR__,
                     'migrations',
+                    new LogStrategyJson(__DIR__ . '/logs.json'),
                     [
                         new Group(
                             'main',
@@ -257,6 +262,7 @@ final class ConfigTranslationJsonTest extends TestCase
                 new Config(
                     __DIR__,
                     'migrations',
+                    new LogStrategyJson(__DIR__ . '/logs.json'),
                     [
                         new Group(
                             'shards',
@@ -265,6 +271,35 @@ final class ConfigTranslationJsonTest extends TestCase
                                 new Database('connection2/shard2', '', ''),
                                 new Database('connection3/shard3', '', ''),
                                 new Database('connection3/shard4', '', ''),
+                            ]
+                        ),
+                    ]
+                )
+            ],
+            "logging in file, different than the default" => [
+                '{
+                    "directory": "migrations",
+                    "logs": {
+                        "type": "file",
+                        "file": "different-log-file.json"
+                    },
+                    "groups": {
+                        "main": {
+                            "connection": "connection1",
+                            "user": "user1",
+                            "password": "password1"
+                        }
+                    }
+                }',
+                new Config(
+                    __DIR__,
+                    'migrations',
+                    new LogStrategyJson(__DIR__ . '/different-log-file.json'),
+                    [
+                        new Group(
+                            'main',
+                            [
+                                new Database('connection1', 'user1', 'password1'),
                             ]
                         ),
                     ]

@@ -40,6 +40,7 @@ final class Skip
     public function skipSingle(bool $commit, string $migrationName): CompletedMigrations
     {
         $config = $this->config->get();
+        $logStrategy = $config->getLogStrategy();
 
         $completedMigrations = new CompletedMigrations();
 
@@ -63,7 +64,7 @@ final class Skip
             $databases = $group->getDatabases();
 
             foreach ($databases as $database) {
-                if ($this->logs->migrationWasExecuted($database->getConnectionString(), $file->getFilename())) {
+                if ($this->logs->migrationWasExecuted($logStrategy, $database->getConnectionString(), $file->getFilename())) {
                     continue;
                 }
 
@@ -75,7 +76,7 @@ final class Skip
                     );
 
                     if ($commit === true) {
-                        $this->logs->append($migrationWasSkipped);
+                        $this->logs->append($logStrategy, $migrationWasSkipped);
                     }
 
                     $completedMigrations->completed($migrationWasSkipped);

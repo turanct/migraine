@@ -9,6 +9,7 @@ final class Config
 {
     private $workingDirectory;
     private $migrationsDirectory;
+    private $logStrategy;
     private $groups;
 
     /**
@@ -16,10 +17,15 @@ final class Config
      * @param string $migrationsDirectory
      * @param Group[] $groups
      */
-    public function __construct(string $workingDirectory, string $migrationsDirectory, array $groups)
-    {
+    public function __construct(
+        string $workingDirectory,
+        string $migrationsDirectory,
+        LogStrategy $logStrategy,
+        array $groups
+    ) {
         $this->workingDirectory = $workingDirectory;
         $this->migrationsDirectory = $migrationsDirectory;
+        $this->logStrategy = $logStrategy;
         $this->groups = $groups;
     }
 
@@ -31,6 +37,11 @@ final class Config
     public function getMigrationsDirectory(): string
     {
         return $this->migrationsDirectory;
+    }
+
+    public function getLogStrategy(): LogStrategy
+    {
+        return $this->logStrategy;
     }
 
     /**
