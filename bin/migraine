@@ -3,7 +3,6 @@
 
 use Symfony\Component\Console\Application;
 use Turanct\Migraine\ClockNow;
-use Turanct\Migraine\CouldNotGenerateConfig;
 use Turanct\Migraine\FilesystemSymfony;
 use Turanct\Migraine\MigrateUp;
 use Turanct\Migraine\Skip;
