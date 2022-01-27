@@ -2,6 +2,7 @@
     "name": "turanct/migraine",
     "type": "library",
     "description": "",
+    "version": "dev-master",
     "keywords": [
         "database",
         "migrations"
@@ -21,7 +22,8 @@
         "ext-json": "*",
         "ext-pdo": "*",
         "symfony/finder": "^v4.4.8",
-        "symfony/console": "^v4.4.7"
+        "symfony/console": "^v4.4.7",
+        "symfony/filesystem": "^v5.2.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.5.20 || ^9.5.2",
