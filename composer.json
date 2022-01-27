@@ -2,7 +2,6 @@
     "name": "turanct/migraine",
     "type": "library",
     "description": "",
-    "version": "dev-master",
     "keywords": [
         "database",
         "migrations"
