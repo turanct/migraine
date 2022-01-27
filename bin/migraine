@@ -41,10 +41,12 @@ $clock = new ClockNow();
 $migrateUp = new MigrateUp($configFromFile, $logs, $clock);
 $skip = new Skip($configFromFile, $logs, $clock);
 $newMigration = new NewMigration($configFromFile, $filesystem, $clock);
+$newSeed = new \Turanct\Migraine\NewSeed($configFromFile, $filesystem, $clock);
 
 $application->add(new \Turanct\Migraine\CommandMigrate($migrateUp));
 $application->add(new \Turanct\Migraine\CommandSkip($skip));
 $application->add(new \Turanct\Migraine\CommandNew($newMigration));
+$application->add(new \Turanct\Migraine\CommandNewSeed($newSeed));
 $application->add(new \Turanct\Migraine\CommandSeed($migrateUp));
 
 $application->run();
