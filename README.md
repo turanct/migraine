@@ -203,17 +203,17 @@ Use the skip functionality with caution. It writes a skipped log to the log file
 You can create seeds by adding a `/seeds` directory to a group's directory.
 In that directory, you can add files just like any other migration.
 
-```sh
-mkdir main/seeds
+You can use the `new seed` command to create a new seed:
 
-touch main/seeds/20200426195623000-seed-users.sql
+```sh
+vendor/bin/migraine new migration main "seed users"
 ```
 
-it will create this file:
+It will create this file:
 `migrations/main/seeds/20200426195623000-seed-users.sql`
 
 
-Fill it with the migration you want to run:
+Fill it with the seeding you want to run:
 ```sql
 INSERT INTO `users` (`id`, `name`, `email`)
 VALUES ('1', 'admin', 'admin@example.com');
