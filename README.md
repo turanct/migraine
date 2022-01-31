@@ -119,10 +119,10 @@ mkdir migrations/shards
 
 ### Add some migrations
 
-You can use the `new` command to create a new migration:
+You can use the `new migration` command to create a new migration:
 
 ```sh
-vendor/bin/migraine new main "create users tabel"
+vendor/bin/migraine new migration main "create users tabel"
 ```
 
 it will create this file:
