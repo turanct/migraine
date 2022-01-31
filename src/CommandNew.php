@@ -55,7 +55,7 @@ final class CommandNew extends Command
             ->addArgument(
                 'action',
                 InputArgument::REQUIRED,
-                'What type of file do you which to create? (migration or seed?)'
+                'What type of file do you wish to create? (migration or seed?)'
             )
         ;
 
