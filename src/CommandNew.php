@@ -83,8 +83,8 @@ final class CommandNew extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $type = $input->getArgument('type');
-        $type = is_string($type) ? $type : self::$migrationAction;
+        $action = $input->getArgument('action');
+        $action = is_string($action) ? $action : self::$migrationAction;
 
         $group = $input->getArgument('group');
         $group = is_string($group) ? $group : '';
@@ -93,7 +93,7 @@ final class CommandNew extends Command
         $suffix = is_string($suffix) ? $suffix : '';
 
         try {
-            switch ($type) {
+            switch ($action) {
                 case self::$seedAction:
                     $migrationPath = $this->newSeed->create($group, $suffix);
                     break;
@@ -107,7 +107,7 @@ final class CommandNew extends Command
             return 1;
         }
 
-        $output->writeln("Created new {$type} {$migrationPath}");
+        $output->writeln("Created new {$action} {$migrationPath}");
         $output->writeln("Don't forget to update relevant migrations or seeds if needed.");
 
         return 0;
