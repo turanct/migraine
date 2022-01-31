@@ -13,6 +13,15 @@ final class CommandNew extends Command
     protected static $defaultName = 'new';
 
     /**
+     * @var string
+     */
+    private static $migrationAction = 'migration';
+    /**
+     * @var string
+     */
+    private static $seedAction = 'migration';
+
+    /**
      * @var NewMigration
      */
     private $newMigration;
@@ -23,8 +32,7 @@ final class CommandNew extends Command
 
     /**
      * @param NewMigration $newMigration
-     *
-     * @throws \LogicException
+     * @param NewSeed $newSeed
      */
     public function __construct(NewMigration $newMigration, NewSeed $newSeed)
     {
@@ -45,9 +53,9 @@ final class CommandNew extends Command
 
         $this
             ->addArgument(
-                'type',
+                'action',
                 InputArgument::REQUIRED,
-                'What type of file do you which to create? (Migration or Seed?)'
+                'What type of file do you which to create? (migration or seed?)'
             )
         ;
 
@@ -76,7 +84,7 @@ final class CommandNew extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $type = $input->getArgument('type');
-        $type = is_string($type) ? $type : 'migration';
+        $type = is_string($type) ? $type : self::$migrationAction;
 
         $group = $input->getArgument('group');
         $group = is_string($group) ? $group : '';
@@ -86,7 +94,7 @@ final class CommandNew extends Command
 
         try {
             switch ($type) {
-                case 'seed':
+                case self::$seedAction:
                     $migrationPath = $this->newSeed->create($group, $suffix);
                     break;
                 default:
@@ -100,9 +108,7 @@ final class CommandNew extends Command
         }
 
         $output->writeln("Created new {$type} {$migrationPath}");
-        if ($type === 'migration') {
-            $output->writeln("Don't forget to update relevant seeds if needed.");
-        }
+        $output->writeln("Don't forget to update relevant migrations or seeds if needed.");
 
         return 0;
     }
