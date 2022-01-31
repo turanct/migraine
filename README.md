@@ -206,7 +206,7 @@ In that directory, you can add files just like any other migration.
 You can use the `new seed` command to create a new seed:
 
 ```sh
-vendor/bin/migraine new migration main "seed users"
+vendor/bin/migraine new seed main "seed users"
 ```
 
 It will create this file:
