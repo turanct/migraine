@@ -16,17 +16,22 @@ final class CommandNew extends Command
      * @var NewMigration
      */
     private $newMigration;
+    /**
+     * @var NewSeed
+     */
+    private $newSeed;
 
     /**
      * @param NewMigration $newMigration
      *
      * @throws \LogicException
      */
-    public function __construct(NewMigration $newMigration)
+    public function __construct(NewMigration $newMigration, NewSeed $newSeed)
     {
         parent::__construct();
 
         $this->newMigration = $newMigration;
+        $this->newSeed = $newSeed;
     }
 
     /**
@@ -37,6 +42,14 @@ final class CommandNew extends Command
         $this
             ->setDescription('Create a new migration file')
             ->setHelp('Create a new migration file in your migrations directory');
+
+        $this
+            ->addArgument(
+                'type',
+                InputArgument::REQUIRED,
+                'What type of file do you which to create? (Migration or Seed?)'
+            )
+        ;
 
         $this
             ->addArgument(
@@ -62,6 +75,9 @@ final class CommandNew extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $type = $input->getArgument('type');
+        $type = is_string($type) ? $type : 'migration';
+
         $group = $input->getArgument('group');
         $group = is_string($group) ? $group : '';
 
@@ -69,15 +85,24 @@ final class CommandNew extends Command
         $suffix = is_string($suffix) ? $suffix : '';
 
         try {
-            $migrationPath = $this->newMigration->create($group, $suffix);
+            switch ($type) {
+                case 'seed':
+                    $migrationPath = $this->newSeed->create($group, $suffix);
+                    break;
+                default:
+                    $migrationPath = $this->newMigration->create($group, $suffix);
+                    break;
+            }
         } catch (PleaseProvideValidGroupName $e) {
             $output->writeln('Please provide a valid group name: ' . implode(', ', $e->getList()));
 
             return 1;
         }
 
-        $output->writeln("Created new migration {$migrationPath}");
-        $output->writeln("Don't forget to update relevant seeds if needed.");
+        $output->writeln("Created new {$type} {$migrationPath}");
+        if ($type === 'migration') {
+            $output->writeln("Don't forget to update relevant seeds if needed.");
+        }
 
         return 0;
     }

@@ -45,8 +45,7 @@ $newSeed = new \Turanct\Migraine\NewSeed($configFromFile, $filesystem, $clock);
 
 $application->add(new \Turanct\Migraine\CommandMigrate($migrateUp));
 $application->add(new \Turanct\Migraine\CommandSkip($skip));
-$application->add(new \Turanct\Migraine\CommandNew($newMigration));
-$application->add(new \Turanct\Migraine\CommandNewSeed($newSeed));
+$application->add(new \Turanct\Migraine\CommandNew($newMigration, $newSeed));
 $application->add(new \Turanct\Migraine\CommandSeed($migrateUp));
 
 $application->run();
