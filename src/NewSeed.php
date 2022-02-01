@@ -74,7 +74,6 @@ final class NewSeed
 
         $seedPath .= "/seeds";
 
-
         if (!is_dir($seedPath)) {
             $this->filesystem->mkdir($seedPath);
         }
