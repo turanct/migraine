@@ -26,6 +26,7 @@ final class CommandNew extends Command
      * @var NewMigration
      */
     private $newMigration;
+
     /**
      * @var NewSeed
      */
