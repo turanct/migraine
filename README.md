@@ -171,10 +171,22 @@ This is how you run all migrations. We'll automatically dry-run your migration:
 vendor/bin/migraine migrate
 ```
 
+Or a dry-run with the seeds
+
+```sh
+vendor/bin/migraine migrate --seed
+```
+
 If you want to commit to the migration you just did a dry-run for, commit:
 
 ```sh
 vendor/bin/migraine migrate --commit
+```
+
+If you want to commit to the migration & seeding you just did a dry-run for, commit:
+
+```sh
+vendor/bin/migraine migrate --seed --commit
 ```
 
 If you want to only migrate a given group, specify it:
@@ -223,6 +235,13 @@ If you want to apply a specific seed, specify it
 
 ```sh
 vendor/bin/migraine seed --seed seeds/20200426195623000-seed-users
+```
+
+
+If you want to commit to the migration & seeding you just did a dry-run for, commit:
+
+```sh
+vendor/bin/migraine migrate --seed --commit
 ```
 
 

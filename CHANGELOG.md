@@ -11,6 +11,8 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
   - Actions:
     - `migration`: This indicates you want to create a migration file
     - `seed`: This indicates you want to create a seed file inside the seeds folder
+- The `migrate` command now takes an additional optional param: `--seed`
+  - Providing this option will also check the seeds or execute the seeds on `--commit`
 
 ### Deprecated
 - You can no longer create a migration file by only calling the `new` command. It is now required to append the action to this.
