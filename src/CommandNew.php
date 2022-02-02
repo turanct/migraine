@@ -16,6 +16,7 @@ final class CommandNew extends Command
      * @var string
      */
     private static $migrationAction = 'migration';
+
     /**
      * @var string
      */
