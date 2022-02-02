@@ -32,13 +32,14 @@ final class MigrateUp
     /**
      * @param bool $commit
      * @param string $onlyMigrateThisGroup
+     * @param bool $withSeeds
      *
      * @throws CouldNotGenerateConfig
      * @throws MigrationsDirectoryNotFound
      *
      * @return CompletedMigrations
      */
-    public function migrateUp(bool $commit = false, string $onlyMigrateThisGroup = ''): CompletedMigrations
+    public function migrateUp(bool $commit = false, string $onlyMigrateThisGroup = '', bool $withSeeds = false): CompletedMigrations
     {
         $config = $this->config->get();
         $logStrategy = $config->getLogStrategy();
@@ -63,6 +64,20 @@ final class MigrateUp
                     ->sortByName(true);
             } catch (\Symfony\Component\Finder\Exception\DirectoryNotFoundException $e) {
                 throw new MigrationsDirectoryNotFound('', 0, $e);
+            }
+
+            if ($withSeeds) {
+                try {
+                    /** @psalm-suppress TooManyArguments */
+                    $files = $finder
+                        ->files()
+                        ->in("{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group->getName()}/seeds")
+                        ->name('*.sql')
+                        ->depth('==0')
+                        ->sortByName(true);
+                } catch (\Symfony\Component\Finder\Exception\DirectoryNotFoundException $e) {
+                    // Seeds dir is not mandatory, so if the directory doesn't exist ignore the exception.
+                }
             }
 
             /** @var \Symfony\Component\Finder\SplFileInfo $file */
