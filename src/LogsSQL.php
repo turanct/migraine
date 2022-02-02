@@ -63,6 +63,41 @@ final class LogsSQL implements Logs
         return false;
     }
 
+    public function seedWasExecuted(LogStrategy $strategy, string $connectionString, string $seed): bool
+    {
+        if (!$strategy instanceof LogStrategySQL) {
+            return false;
+        }
+
+        $db = new PDO(
+            $strategy->getConnectionString(),
+            $strategy->getUser(),
+            $strategy->getPassword(),
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+        );
+
+        $statement = $db->prepare("SELECT * FROM `{$strategy->getTable()}`");
+        $statement->execute();
+
+        $events = $statement->fetchAll();
+
+        $events = $this->mapRowsToEvents($events);
+
+        foreach ($events as $event) {
+            $event = $event->toArray();
+
+            if (
+                in_array($event['event'], [EventSeedWasExecuted::class, EventMigrationWasSkipped::class])
+                && $event['connectionString'] === $connectionString
+                && $event['seed'] === $seed
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getAll(LogStrategy $strategy): array
     {
         if (!$strategy instanceof LogStrategySQL) {

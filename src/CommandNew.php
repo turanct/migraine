@@ -19,7 +19,7 @@ final class CommandNew extends Command
     /**
      * @var string
      */
-    private static $seedAction = 'migration';
+    private static $seedAction = 'seed';
 
     /**
      * @var NewMigration

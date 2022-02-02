@@ -45,6 +45,19 @@ final class LogsDispatch implements Logs
         return false;
     }
 
+    public function seedWasExecuted(LogStrategy $strategy, string $connectionString, string $seed): bool
+    {
+        foreach ($this->loggers as $logger) {
+            if ($logger->acceptsStrategy($strategy) === false) {
+                continue;
+            }
+
+            return $logger->seedWasExecuted($strategy, $connectionString, $seed);
+        }
+
+        return false;
+    }
+
     public function getAll(LogStrategy $strategy): array
     {
         foreach ($this->loggers as $logger) {

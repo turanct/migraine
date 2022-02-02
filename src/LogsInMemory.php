@@ -39,6 +39,24 @@ final class LogsInMemory implements Logs
         return false;
     }
 
+
+    public function seedWasExecuted(LogStrategy $strategy, string $connectionString, string $seed): bool
+    {
+        foreach ($this->events as $event) {
+            $event = $event->toArray();
+
+            if (
+                $event['event'] === EventSeedWasExecuted::class
+                && $event['connectionString'] === $connectionString
+                && $event['seed'] === $seed
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getAll(LogStrategy $strategy): array
     {
         return $this->events;

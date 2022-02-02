@@ -16,17 +16,21 @@ final class CommandMigrate extends Command
      * @var MigrateUp
      */
     private $migrateUp;
+    /**
+     * @var SeedUp
+     */
+    private $seedUp;
 
     /**
-     * @param MigrateUp $migrateUp
-     *
-     * @throws \LogicException
+     * @param MigrateUp $seedUp
+     * @param SeedUp $seedUp
      */
-    public function __construct(MigrateUp $migrateUp)
+    public function __construct(MigrateUp $migrateUp, SeedUp $seedUp)
     {
         parent::__construct();
 
         $this->migrateUp = $migrateUp;
+        $this->seedUp = $seedUp;
     }
 
     /**
@@ -106,7 +110,7 @@ final class CommandMigrate extends Command
         if (!empty($singleMigration)) {
             $completedMigrations = $this->migrateUp->migrateSingle($commit, $singleMigration);
         } else {
-            $completedMigrations = $this->migrateUp->migrateUp($commit, $group, $seed);
+            $completedMigrations = $this->migrateUp->migrateUp($commit, $group);
         }
 
         $listOfCompletedMigrations = $completedMigrations->getList();
@@ -119,6 +123,26 @@ final class CommandMigrate extends Command
             $output->writeln($completedMigrations->getError());
 
             $exitCode = 1;
+        }
+
+        if ($exitCode === 1) {
+            return $exitCode;
+        }
+
+        if ($seed) {
+            $completedSeeds = $this->seedUp->seedUp($commit, $group);
+
+            $listOfCompletedSeeds = $completedSeeds->getList();
+            foreach ($listOfCompletedSeeds as $completedSeed) {
+                $line = "✅ {$completedSeed->getConnectionString()} ⬅️  {$completedSeed->getSeed()}";
+                $output->writeln($line);
+            }
+
+            if ($completedSeeds->failed()) {
+                $output->writeln($completedSeeds->getError());
+
+                $exitCode = 1;
+            }
         }
 
         if ($commit !== true && $silent !== true) {
