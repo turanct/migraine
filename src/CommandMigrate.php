@@ -16,6 +16,7 @@ final class CommandMigrate extends Command
      * @var MigrateUp
      */
     private $migrateUp;
+
     /**
      * @var SeedUp
      */
