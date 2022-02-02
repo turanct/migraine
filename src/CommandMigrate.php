@@ -58,6 +58,15 @@ final class CommandMigrate extends Command
 
         $this
             ->addOption(
+                'seed',
+                null,
+                InputOption::VALUE_NONE,
+                'In addition to the migration, run all the seeds.',
+                null
+            );
+
+        $this
+            ->addOption(
                 'commit',
                 null,
                 InputOption::VALUE_NONE,
@@ -86,6 +95,7 @@ final class CommandMigrate extends Command
 
         $commit = (bool) $input->getOption('commit');
         $silent = (bool) $input->getOption('silent');
+        $seed = (bool) $input->getOption('seed');
 
         $group = $input->getOption('group');
         $group = is_string($group) ? $group : '';
@@ -96,7 +106,7 @@ final class CommandMigrate extends Command
         if (!empty($singleMigration)) {
             $completedMigrations = $this->migrateUp->migrateSingle($commit, $singleMigration);
         } else {
-            $completedMigrations = $this->migrateUp->migrateUp($commit, $group);
+            $completedMigrations = $this->migrateUp->migrateUp($commit, $group, $seed);
         }
 
         $listOfCompletedMigrations = $completedMigrations->getList();
