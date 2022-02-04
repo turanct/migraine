@@ -88,7 +88,7 @@ final class LogsSQL implements Logs
             $event = $event->toArray();
 
             if (
-                in_array($event['event'], [EventSeedWasExecuted::class, EventMigrationWasSkipped::class])
+                $event['event'] == EventSeedWasExecuted::class
                 && $event['connectionString'] === $connectionString
                 && $event['seed'] === $seed
             ) {
