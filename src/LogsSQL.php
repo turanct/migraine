@@ -76,7 +76,7 @@ final class LogsSQL implements Logs
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        $query = "SELECT * FROM `{$strategy->getTable()}`";
+        $query = "SELECT `event` FROM `{$strategy->getTable()}`";
         $statement = $db->prepare($query);
         $statement->execute();
 
