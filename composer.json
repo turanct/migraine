@@ -14,6 +14,12 @@
             "email": "spinnewebber_toon@hotmail.com",
             "homepage": "https://github.com/turanct",
             "role": "Developer"
+        },
+        {
+            "name": "Ben Serlippens",
+            "email": "ben.serlippens@gmail.com",
+            "homepage": "https://github.com/BenSeDev",
+            "role": "Developer"
         }
     ],
     "require": {
