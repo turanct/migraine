@@ -15,6 +15,7 @@ final class Config
     /**
      * @param string $workingDirectory
      * @param string $migrationsDirectory
+     * @param LogStrategy $logStrategy
      * @param Group[] $groups
      */
     public function __construct(

@@ -4,9 +4,9 @@ namespace Turanct\Migraine;
 
 use PHPUnit\Framework\TestCase;
 
-final class MigrateUpTest extends TestCase
+class SeedUpTest extends TestCase
 {
-    public function test_it_runs_a_single_migration()
+    public function test_it_dry_runs_a_single_seed(): void
     {
         $this->clearDatabase();
 
@@ -24,17 +24,53 @@ final class MigrateUpTest extends TestCase
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
+        $this->createSingleMigration($getConfig, $logs, $clock);
 
-        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
+        $seedUp = new SeedUp($getConfig, $logs, $clock);
+        $seedName = 'single-migration.sql';
+        $actualInfo = $seedUp->seed(false, $seedName);
 
-        $migrationName = 'single-migration.sql';
-        $actualInfo = $migrateUp->migrateSingle(true, $migrationName);
-
-        $expectedInfo = new CompletedMigrations();
+        $expectedInfo = new CompletedSeeds();
         $expectedInfo->completed(
-            new EventMigrationWasExecuted(
+            new EventSeedWasExecuted(
                 $this->connectionString(),
-                $migrationName,
+                $seedName,
+                $time
+            )
+        );
+
+        $this->assertEquals($expectedInfo, $actualInfo);
+    }
+
+    public function test_it_runs_a_single_seed(): void
+    {
+        $this->clearDatabase();
+
+        $config = new Config(
+            __DIR__,
+            'fixtures',
+            new LogStrategyJson('logs.json'),
+            [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
+        );
+
+        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
+        $getConfig->method('get')->willReturn($config);
+
+        $logs = new LogsInMemory();
+
+        $time = new \DateTimeImmutable('now');
+        $clock = new ClockFixed($time);
+        $this->createSingleMigration($getConfig, $logs, $clock);
+
+        $seedUp = new SeedUp($getConfig, $logs, $clock);
+        $seedName = 'single-seed.sql';
+        $actualInfo = $seedUp->seed(true, "seeds/{$seedName}");
+
+        $expectedInfo = new CompletedSeeds();
+        $expectedInfo->completed(
+            new EventSeedWasExecuted(
+                $this->connectionString(),
+                $seedName,
                 $time
             )
         );
@@ -42,12 +78,12 @@ final class MigrateUpTest extends TestCase
         $this->assertEquals($expectedInfo, $actualInfo);
 
         $realDBConnection = new \PDO($this->connectionString());
-        $result = $realDBConnection->query('SELECT name FROM sqlite_master WHERE type="table"');
-        $tables = $result->fetchAll();
-        $this->assertEquals([['test', 'name' => 'test']], $tables);
+        $result = $realDBConnection->query('SELECT `id` FROM `test`');
+
+        $this->assertEquals('This is an id', $result->fetchColumn(0));
     }
 
-    public function test_it_dry_runs_a_single_migration()
+    public function test_it_fails_a_single_seed_when_the_file_is_corrupt(): void
     {
         $this->clearDatabase();
 
@@ -65,57 +101,19 @@ final class MigrateUpTest extends TestCase
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
+        $this->createSingleMigration($getConfig, $logs, $clock);
 
-        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
+        $seedUp = new SeedUp($getConfig, $logs, $clock);
+        $seedName = 'faulty-seed.sql';
+        $actualInfo = $seedUp->seed(true, "seeds/{$seedName}");
 
-        $migrationName = 'single-migration.sql';
-        $actualInfo = $migrateUp->migrateSingle(false, $migrationName);
-
-        $expectedInfo = new CompletedMigrations();
-        $expectedInfo->completed(
-            new EventMigrationWasExecuted(
-                $this->connectionString(),
-                $migrationName,
-                $time
-            )
-        );
-
-        $this->assertEquals($expectedInfo, $actualInfo);
-
-        $this->assertEquals(false, file_exists($this->dbFile()));
-    }
-
-    public function test_it_fails_a_single_migration_when_the_file_is_corrupt()
-    {
-        $this->clearDatabase();
-
-        $config = new Config(
-            __DIR__,
-            'fixtures',
-            new LogStrategyJson('logs.json'),
-            [new Group('single-migration-test', [new Database($this->connectionString(), '', '')])]
-        );
-
-        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
-        $getConfig->method('get')->willReturn($config);
-
-        $logs = new LogsInMemory();
-
-        $time = new \DateTimeImmutable('now');
-        $clock = new ClockFixed($time);
-
-        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
-
-        $migrationName = 'faulty-migration.sql';
-        $actualInfo = $migrateUp->migrateSingle(true, $migrationName);
-
-        $expectedInfo = new CompletedMigrations();
-        $expectedInfo->withError('SQLSTATE[HY000]: General error: 1 near "crate": syntax error');
+        $expectedInfo = new CompletedSeeds();
+        $expectedInfo->withError('SQLSTATE[HY000]: General error: 1 near "INSRT": syntax error');
 
         $this->assertEquals($expectedInfo, $actualInfo);
     }
 
-    public function test_it_runs_all_migrations()
+    public function test_it_dry_runs_all_seeds(): void
     {
         $this->clearDatabase();
 
@@ -133,38 +131,37 @@ final class MigrateUpTest extends TestCase
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
+        $this->createMigrations($getConfig, $logs, $clock);
 
-        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
+        $seedUp = new SeedUp($getConfig, $logs, $clock);
+        $actualInfo = $seedUp->seedUp(false, 'all-migrations-test');
 
-        $actualInfo = $migrateUp->migrateUp(true, 'all-migrations-test');
-
-        $expectedInfo = new CompletedMigrations();
+        $expectedInfo = new CompletedSeeds();
         $expectedInfo->completed(
-            new EventMigrationWasExecuted(
+            new EventSeedWasExecuted(
                 $this->connectionString(),
-                'migration-1.sql',
+                'seed-1.sql',
                 $time
             )
         );
         $expectedInfo->completed(
-            new EventMigrationWasExecuted(
+            new EventSeedWasExecuted(
                 $this->connectionString(),
-                'migration-2.sql',
+                'seed-2.sql',
                 $time
             )
         );
 
         $this->assertEquals($expectedInfo, $actualInfo);
 
-        $expectedStructure = "CREATE TABLE `test` (\n    `id` varchar(255) NOT NULL\n, `name` varchar(255))";
-
         $realDBConnection = new \PDO($this->connectionString());
-        $result = $realDBConnection->query('SELECT `sql` FROM `sqlite_master` WHERE `name` = "test"');
-        $tables = $result->fetchAll();
-        $this->assertEquals($expectedStructure, $tables[0]['sql']);
+        $result = $realDBConnection->query('SELECT * FROM `test`');
+        $response = $result->fetchAll();
+
+        $this->assertEmpty($response);
     }
 
-    public function test_it_dry_runs_all_migrations()
+    public function test_it_runs_all_seeds(): void
     {
         $this->clearDatabase();
 
@@ -182,56 +179,47 @@ final class MigrateUpTest extends TestCase
 
         $time = new \DateTimeImmutable('now');
         $clock = new ClockFixed($time);
+        $this->createMigrations($getConfig, $logs, $clock);
 
-        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
+        $seedUp = new SeedUp($getConfig, $logs, $clock);
+        $actualInfo = $seedUp->seedUp(true, 'all-migrations-test');
 
-        $actualInfo = $migrateUp->migrateUp(false, 'all-migrations-test');
-
-        $expectedInfo = new CompletedMigrations();
+        $expectedInfo = new CompletedSeeds();
         $expectedInfo->completed(
-            new EventMigrationWasExecuted(
+            new EventSeedWasExecuted(
                 $this->connectionString(),
-                'migration-1.sql',
+                'seed-1.sql',
                 $time
             )
         );
         $expectedInfo->completed(
-            new EventMigrationWasExecuted(
+            new EventSeedWasExecuted(
                 $this->connectionString(),
-                'migration-2.sql',
+                'seed-2.sql',
                 $time
             )
         );
 
         $this->assertEquals($expectedInfo, $actualInfo);
 
-        $this->assertEquals(false, file_exists($this->dbFile()));
+        $realDBConnection = new \PDO($this->connectionString());
+        $result = $realDBConnection->query('SELECT * FROM `test`');
+        $response = $result->fetchAll();
+
+        $this->assertEquals('This is an id', $response[0]['id']);
+        $this->assertEquals('This is a name', $response[0]['name']);
     }
 
-    public function test_it_fails_when_the_group_directory_does_not_exist()
+    private function createSingleMigration(GetConfig $getConfig, Logs $logs, Clock $clock)
     {
-        $this->expectException(MigrationsDirectoryNotFound::class);
-
-        $this->clearDatabase();
-
-        $config = new Config(
-            __DIR__,
-            'fixtures-that-dont-exist',
-            new LogStrategyJson('logs.json'),
-            [new Group('non-existing-group', [new Database($this->connectionString(), '', '')])]
-        );
-
-        $getConfig = $this->getMockBuilder(GetConfig::class)->getMock();
-        $getConfig->method('get')->willReturn($config);
-
-        $logs = new LogsInMemory();
-
-        $time = new \DateTimeImmutable('now');
-        $clock = new ClockFixed($time);
-
         $migrateUp = new MigrateUp($getConfig, $logs, $clock);
+        $migrateUp->migrateSingle(true, 'single-migration.sql');
+    }
 
-        $actualInfo = $migrateUp->migrateUp(true, 'non-existing-group');
+    private function createMigrations(GetConfig $getConfig, Logs $logs, Clock $clock)
+    {
+        $migrateUp = new MigrateUp($getConfig, $logs, $clock);
+        $migrateUp->migrateUp(true, 'all-migrations-test');
     }
 
     private function clearDatabase(): void
@@ -250,5 +238,12 @@ final class MigrateUpTest extends TestCase
     private function dbFile(): string
     {
         return __DIR__ . '/test';
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->clearDatabase();
     }
 }

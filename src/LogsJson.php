@@ -45,6 +45,29 @@ final class LogsJson implements Logs
         return false;
     }
 
+    public function seedWasExecuted(LogStrategy $strategy, string $connectionString, string $seed): bool
+    {
+        if (!$strategy instanceof LogStrategyJson) {
+            return false;
+        }
+
+        $events = $this->readFromFile($strategy->getFile());
+
+        foreach ($events as $event) {
+            $event = $event->toArray();
+
+            if (
+                $event['event'] === EventSeedWasExecuted::class
+                && $event['connectionString'] === $connectionString
+                && $event['seed'] === $seed
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function getAll(LogStrategy $strategy): array
     {
         if (!$strategy instanceof LogStrategyJson) {
@@ -84,6 +107,9 @@ final class LogsJson implements Logs
                     if ($event['event'] === EventMigrationWasSkipped::class) {
                         return EventMigrationWasSkipped::fromArray($event);
                     }
+                    if ($event['event'] === EventSeedWasExecuted::class) {
+                        return EventSeedWasExecuted::fromArray($event);
+                    }
                 } catch (\InvalidArgumentException $e) {
                     return null;
                 }
@@ -93,9 +119,7 @@ final class LogsJson implements Logs
             $events
         );
 
-        $events = array_filter($events);
-
-        return $events;
+        return array_filter($events);
     }
 
     /**

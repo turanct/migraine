@@ -2,6 +2,7 @@
 /vendor/*
 /phpunit.xml
 /.env
+.idea
 
 /migrations.json
 /migrations/*

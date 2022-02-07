@@ -13,20 +13,20 @@ final class CommandSeed extends Command
     protected static $defaultName = 'seed';
 
     /**
-     * @var MigrateUp
+     * @var SeedUp
      */
-    private $migrateUp;
+    private $seedUp;
 
     /**
-     * @param MigrateUp $migrateUp
+     * @param SeedUp $seedUp
      *
      * @throws \LogicException
      */
-    public function __construct(MigrateUp $migrateUp)
+    public function __construct(SeedUp $seedUp)
     {
         parent::__construct();
 
-        $this->migrateUp = $migrateUp;
+        $this->seedUp = $seedUp;
     }
 
     /**
@@ -70,16 +70,16 @@ final class CommandSeed extends Command
 
         $commit = (bool) $input->getOption('commit');
 
-        $completedMigrations = $this->migrateUp->seed($commit, $seed);
+        $completedSeeds = $this->seedUp->seed($commit, $seed);
 
-        $listOfCompletedMigrations = $completedMigrations->getList();
-        foreach ($listOfCompletedMigrations as $completedMigration) {
-            $line = "✅ {$completedMigration->getConnectionString()} ⬅️  {$completedMigration->getMigration()}";
+        $listOfCompletedSeeds = $completedSeeds->getList();
+        foreach ($listOfCompletedSeeds as $completedSeed) {
+            $line = "✅ {$completedSeed->getConnectionString()} ⬅️  {$completedSeed->getSeed()}";
             $output->writeln($line);
         }
 
-        if ($completedMigrations->failed()) {
-            $output->writeln($completedMigrations->getError());
+        if ($completedSeeds->failed()) {
+            $output->writeln($completedSeeds->getError());
 
             $exitCode = 1;
         }

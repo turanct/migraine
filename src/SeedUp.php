@@ -5,7 +5,7 @@ namespace Turanct\Migraine;
 use PDO;
 use PDOException;
 
-final class MigrateUp
+final class SeedUp
 {
     /**
      * @var GetConfig
@@ -34,16 +34,15 @@ final class MigrateUp
      * @param string $onlyMigrateThisGroup
      *
      * @throws CouldNotGenerateConfig
-     * @throws MigrationsDirectoryNotFound
      *
-     * @return CompletedMigrations
+     * @return CompletedSeeds
      */
-    public function migrateUp(bool $commit = false, string $onlyMigrateThisGroup = ''): CompletedMigrations
+    public function seedUp(bool $commit = false, string $onlyMigrateThisGroup = ''): CompletedSeeds
     {
         $config = $this->config->get();
         $logStrategy = $config->getLogStrategy();
 
-        $completedMigrations = new CompletedMigrations();
+        $completedSeeds = new CompletedSeeds();
 
         $groups = $config->getGroups();
 
@@ -53,26 +52,27 @@ final class MigrateUp
             }
 
             $finder = new \Symfony\Component\Finder\Finder();
+
             try {
                 /** @psalm-suppress TooManyArguments */
                 $files = $finder
                     ->files()
-                    ->in("{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group->getName()}")
+                    ->in("{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/{$group->getName()}/seeds")
                     ->name('*.sql')
                     ->depth('==0')
                     ->sortByName(true);
             } catch (\Symfony\Component\Finder\Exception\DirectoryNotFoundException $e) {
-                throw new MigrationsDirectoryNotFound('', 0, $e);
+                // Seeds dir is not mandatory, so if the directory doesn't exist ignore the exception.
             }
 
             /** @var \Symfony\Component\Finder\SplFileInfo $file */
             foreach ($files as $file) {
-                $migration = $file->getContents();
+                $seed = $file->getContents();
 
                 $databases = $group->getDatabases();
 
                 foreach ($databases as $database) {
-                    if ($this->logs->migrationWasExecuted($logStrategy, $database->getConnectionString(), $file->getFilename())) {
+                    if ($this->logs->seedWasExecuted($logStrategy, $database->getConnectionString(), $file->getFilename())) {
                         continue;
                     }
 
@@ -85,87 +85,82 @@ final class MigrateUp
                                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
                             );
 
-                            $result = $db->exec($migration);
+                            $result = $db->exec($seed);
 
                             if ($result === false) {
                                 $errorInfo = $db->errorInfo();
 
                                 throw QueryFailed::withMigrationData(
                                     (string) $errorInfo[2],
-                                    $migration,
+                                    $seed,
                                     $database->getConnectionString()
                                 );
                             }
                         }
 
-                        $migrationWasExecuted = new EventMigrationWasExecuted(
+                        $seedWasExecuted = new EventSeedWasExecuted(
                             $database->getConnectionString(),
                             $file->getFilename(),
                             $this->clock->getTime()
                         );
 
                         if ($commit === true) {
-                            $this->logs->append($logStrategy, $migrationWasExecuted);
+                            $this->logs->append($logStrategy, $seedWasExecuted);
                         }
 
-                        $completedMigrations->completed($migrationWasExecuted);
+                        $completedSeeds->completed($seedWasExecuted);
                     } catch (QueryFailed $e) {
-                        $completedMigrations->withError($e->getMessage());
+                        $completedSeeds->withError($e->getMessage());
 
-                        return $completedMigrations;
+                        return $completedSeeds;
                     } catch (PDOException $e) {
-                        $completedMigrations->withError($e->getMessage());
+                        $completedSeeds->withError($e->getMessage());
 
-                        return $completedMigrations;
+                        return $completedSeeds;
                     }
                 }
             }
         }
 
-        return $completedMigrations;
+        return $completedSeeds;
     }
 
     /**
      * @param bool $commit
-     * @param string $migrationName
+     * @param string $seedName
      *
      * @throws CouldNotGenerateConfig
      *
-     * @return CompletedMigrations
+     * @return CompletedSeeds
      */
-    public function migrateSingle(bool $commit, string $migrationName): CompletedMigrations
+    public function seed(bool $commit, string $seedName): CompletedSeeds
     {
         $config = $this->config->get();
-        $logStrategy = $config->getLogStrategy();
 
-        $completedMigrations = new CompletedMigrations();
+        $completedSeeds = new CompletedSeeds();
 
-        if (empty($migrationName)) {
-            $completedMigrations->withError('Provide a valid migration name.');
+        if (empty($seedName)) {
+            $completedSeeds->withError('Provide a valid seed name.');
 
-            return $completedMigrations;
+            return $completedSeeds;
         }
 
         $groups = $config->getGroups();
 
         foreach ($groups as $group) {
-            $migrationPath = "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/";
-            $migrationPath.= "{$group->getName()}/{$migrationName}";
+            $seedPath = "{$config->getWorkingDirectory()}/{$config->getMigrationsDirectory()}/";
+            $seedPath.= "{$group->getName()}/{$seedName}";
 
-            $file = new \SplFileInfo($migrationPath);
+            $file = new \SplFileInfo($seedPath);
             if (!$file->isFile()) {
                 continue;
             }
 
-            $migration = file_get_contents($file->getRealPath());
+            $seed = file_get_contents($file->getRealPath());
 
             $databases = $group->getDatabases();
 
             foreach ($databases as $database) {
-                if ($this->logs->migrationWasExecuted($logStrategy, $database->getConnectionString(), $file->getFilename())) {
-                    continue;
-                }
-
                 try {
                     if ($commit === true) {
                         $db = new PDO(
@@ -175,42 +170,38 @@ final class MigrateUp
                             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
                         );
 
-                        $result = $db->exec($migration);
+                        $result = $db->exec($seed);
 
                         if ($result === false) {
                             $errorInfo = $db->errorInfo();
 
-                            throw QueryFailed::withMigrationData(
+                            throw QueryFailed::withSeedData(
                                 (string) $errorInfo[2],
-                                $migration,
+                                $seed,
                                 $database->getConnectionString()
                             );
                         }
                     }
 
-                    $migrationWasExecuted = new EventMigrationWasExecuted(
+                    $seedWasExecuted = new EventSeedWasExecuted(
                         $database->getConnectionString(),
                         $file->getFilename(),
                         $this->clock->getTime()
                     );
 
-                    if ($commit === true) {
-                        $this->logs->append($logStrategy, $migrationWasExecuted);
-                    }
-
-                    $completedMigrations->completed($migrationWasExecuted);
+                    $completedSeeds->completed($seedWasExecuted);
                 } catch (QueryFailed $e) {
-                    $completedMigrations->withError($e->getMessage());
+                    $completedSeeds->withError($e->getMessage());
 
-                    return $completedMigrations;
+                    return $completedSeeds;
                 } catch (PDOException $e) {
-                    $completedMigrations->withError($e->getMessage());
+                    $completedSeeds->withError($e->getMessage());
 
-                    return $completedMigrations;
+                    return $completedSeeds;
                 }
             }
         }
 
-        return $completedMigrations;
+        return $completedSeeds;
     }
 }

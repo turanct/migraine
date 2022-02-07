@@ -3,8 +3,14 @@
 
 use Symfony\Component\Console\Application;
 use Turanct\Migraine\ClockNow;
+use Turanct\Migraine\CommandMigrate;
+use Turanct\Migraine\CommandNew;
+use Turanct\Migraine\CommandSeed;
+use Turanct\Migraine\CommandSkip;
 use Turanct\Migraine\FilesystemSymfony;
 use Turanct\Migraine\MigrateUp;
+use Turanct\Migraine\NewSeed;
+use Turanct\Migraine\SeedUp;
 use Turanct\Migraine\Skip;
 use Turanct\Migraine\NewMigration;
 
@@ -39,12 +45,14 @@ $filesystem = new FilesystemSymfony($filesystemSymfony);
 $clock = new ClockNow();
 
 $migrateUp = new MigrateUp($configFromFile, $logs, $clock);
+$seedUp = new SeedUp($configFromFile, $logs, $clock);
 $skip = new Skip($configFromFile, $logs, $clock);
 $newMigration = new NewMigration($configFromFile, $filesystem, $clock);
+$newSeed = new NewSeed($configFromFile, $filesystem, $clock);
 
-$application->add(new \Turanct\Migraine\CommandMigrate($migrateUp));
-$application->add(new \Turanct\Migraine\CommandSkip($skip));
-$application->add(new \Turanct\Migraine\CommandNew($newMigration));
-$application->add(new \Turanct\Migraine\CommandSeed($migrateUp));
+$application->add(new CommandMigrate($migrateUp, $seedUp));
+$application->add(new CommandSkip($skip));
+$application->add(new CommandNew($newMigration, $newSeed));
+$application->add(new CommandSeed($seedUp));
 
 $application->run();

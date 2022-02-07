@@ -10,6 +10,8 @@ interface Logs
 
     public function migrationWasExecuted(LogStrategy $strategy, string $connectionString, string $migration): bool;
 
+    public function seedWasExecuted(LogStrategy $strategy, string $connectionString, string $seed): bool;
+
     /**
      * @psalm-suppress PossiblyUnusedMethod
      *

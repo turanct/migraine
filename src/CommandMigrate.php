@@ -18,15 +18,20 @@ final class CommandMigrate extends Command
     private $migrateUp;
 
     /**
-     * @param MigrateUp $migrateUp
-     *
-     * @throws \LogicException
+     * @var SeedUp
      */
-    public function __construct(MigrateUp $migrateUp)
+    private $seedUp;
+
+    /**
+     * @param MigrateUp $seedUp
+     * @param SeedUp $seedUp
+     */
+    public function __construct(MigrateUp $migrateUp, SeedUp $seedUp)
     {
         parent::__construct();
 
         $this->migrateUp = $migrateUp;
+        $this->seedUp = $seedUp;
     }
 
     /**
@@ -54,6 +59,15 @@ final class CommandMigrate extends Command
                 InputOption::VALUE_OPTIONAL,
                 'Migrate a single migration',
                 ''
+            );
+
+        $this
+            ->addOption(
+                'seed',
+                null,
+                InputOption::VALUE_NONE,
+                'In addition to the migration, run all the seeds.',
+                null
             );
 
         $this
@@ -86,6 +100,7 @@ final class CommandMigrate extends Command
 
         $commit = (bool) $input->getOption('commit');
         $silent = (bool) $input->getOption('silent');
+        $seed = (bool) $input->getOption('seed');
 
         $group = $input->getOption('group');
         $group = is_string($group) ? $group : '';
@@ -109,6 +124,26 @@ final class CommandMigrate extends Command
             $output->writeln($completedMigrations->getError());
 
             $exitCode = 1;
+        }
+
+        if ($exitCode === 1) {
+            return $exitCode;
+        }
+
+        if ($seed) {
+            $completedSeeds = $this->seedUp->seedUp($commit, $group);
+
+            $listOfCompletedSeeds = $completedSeeds->getList();
+            foreach ($listOfCompletedSeeds as $completedSeed) {
+                $line = "✅ {$completedSeed->getConnectionString()} ⬅️  {$completedSeed->getSeed()}";
+                $output->writeln($line);
+            }
+
+            if ($completedSeeds->failed()) {
+                $output->writeln($completedSeeds->getError());
+
+                $exitCode = 1;
+            }
         }
 
         if ($commit !== true && $silent !== true) {

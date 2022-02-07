@@ -1,18 +1,24 @@
 {
-    "name": "turanct/migraine",
+    "name": "engagor/migraine",
     "type": "library",
     "description": "",
     "keywords": [
         "database",
         "migrations"
     ],
-    "homepage": "https://github.com/turanct/migraine",
+    "homepage": "https://github.com/engagor/migraine",
     "license": "MIT",
     "authors": [
         {
             "name": "Toon Daelman",
             "email": "spinnewebber_toon@hotmail.com",
             "homepage": "https://github.com/turanct",
+            "role": "Developer"
+        },
+        {
+            "name": "Ben Serlippens",
+            "email": "ben.serlippens@gmail.com",
+            "homepage": "https://github.com/BenSeDev",
             "role": "Developer"
         }
     ],
@@ -21,7 +27,8 @@
         "ext-json": "*",
         "ext-pdo": "*",
         "symfony/finder": "^v4.4.8",
-        "symfony/console": "^v4.4.7"
+        "symfony/console": "^v4.4.7",
+        "symfony/filesystem": "^v5.2.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.5.20 || ^9.5.2",

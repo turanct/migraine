@@ -13,20 +13,35 @@ final class CommandNew extends Command
     protected static $defaultName = 'new';
 
     /**
+     * @var string
+     */
+    private static $migrationAction = 'migration';
+
+    /**
+     * @var string
+     */
+    private static $seedAction = 'seed';
+
+    /**
      * @var NewMigration
      */
     private $newMigration;
 
     /**
-     * @param NewMigration $newMigration
-     *
-     * @throws \LogicException
+     * @var NewSeed
      */
-    public function __construct(NewMigration $newMigration)
+    private $newSeed;
+
+    /**
+     * @param NewMigration $newMigration
+     * @param NewSeed $newSeed
+     */
+    public function __construct(NewMigration $newMigration, NewSeed $newSeed)
     {
         parent::__construct();
 
         $this->newMigration = $newMigration;
+        $this->newSeed = $newSeed;
     }
 
     /**
@@ -37,6 +52,14 @@ final class CommandNew extends Command
         $this
             ->setDescription('Create a new migration file')
             ->setHelp('Create a new migration file in your migrations directory');
+
+        $this
+            ->addArgument(
+                'action',
+                InputArgument::REQUIRED,
+                'What type of file do you wish to create? (migration or seed?)'
+            )
+        ;
 
         $this
             ->addArgument(
@@ -62,6 +85,9 @@ final class CommandNew extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $action = $input->getArgument('action');
+        $action = is_string($action) ? $action : self::$migrationAction;
+
         $group = $input->getArgument('group');
         $group = is_string($group) ? $group : '';
 
@@ -69,15 +95,22 @@ final class CommandNew extends Command
         $suffix = is_string($suffix) ? $suffix : '';
 
         try {
-            $migrationPath = $this->newMigration->create($group, $suffix);
+            switch ($action) {
+                case self::$seedAction:
+                    $migrationPath = $this->newSeed->create($group, $suffix);
+                    break;
+                default:
+                    $migrationPath = $this->newMigration->create($group, $suffix);
+                    break;
+            }
         } catch (PleaseProvideValidGroupName $e) {
             $output->writeln('Please provide a valid group name: ' . implode(', ', $e->getList()));
 
             return 1;
         }
 
-        $output->writeln("Created new migration {$migrationPath}");
-        $output->writeln("Don't forget to update relevant seeds if needed.");
+        $output->writeln("Created new {$action} {$migrationPath}");
+        $output->writeln("Don't forget to update relevant migrations or seeds if needed.");
 
         return 0;
     }
